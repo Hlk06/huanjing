@@ -820,10 +820,11 @@ def _init_preset_data():
 # ============================================
 # 应用启动入口
 # ============================================
-if __name__ == '__main__':
-    # 创建应用实例
-    app = create_app()
 
+# 顶层 app 实例 — 供 Gunicorn / Vercel / 云部署使用
+app = create_app()
+
+if __name__ == '__main__':
     # 打印启动信息
     import socket
     lan_ip = '未知'
