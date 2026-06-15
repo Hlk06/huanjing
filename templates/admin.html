@@ -1,0 +1,834 @@
+<!--
+  admin.html — 管理后台页面
+  作用: 提供教材、疾病、信息条目和症状的增删改查界面
+  包含: 教材管理、疾病管理、内容管理、症状管理、批量导入5个Tab
+  继承自: base.html
+-->
+{% extends 'base.html' %}
+{% block title %}管理后台 - 临床医学学习系统{% endblock %}
+
+{% block content %}
+<h3 class="mb-4"><i class="bi bi-gear"></i> 管理后台</h3>
+
+<!-- 统计卡片 -->
+<div class="row g-3 mb-4" id="statsCards">
+    <div class="col-6 col-md-3">
+        <div class="card bg-primary text-white text-center shadow-sm">
+            <div class="card-body py-3">
+                <div class="fs-4 fw-bold" id="statTextbooks">-</div>
+                <small>教材数量</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card bg-success text-white text-center shadow-sm">
+            <div class="card-body py-3">
+                <div class="fs-4 fw-bold" id="statDiseases">-</div>
+                <small>疾病数量</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card bg-info text-white text-center shadow-sm">
+            <div class="card-body py-3">
+                <div class="fs-4 fw-bold" id="statInfos">-</div>
+                <small>信息条目</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card bg-warning text-white text-center shadow-sm">
+            <div class="card-body py-3">
+                <div class="fs-4 fw-bold" id="statSymptoms">-</div>
+                <small>症状词汇</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================
+管理Tab选项卡
+============================================ -->
+<ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+    <li class="nav-item">
+        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-textbooks">
+            📚 教材管理
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-diseases">
+            🏥 疾病管理
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-infos">
+            📝 内容管理
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-symptoms">
+            🏷️ 症状管理
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-import">
+            📥 批量导入
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-upload">
+            📤 上传教材
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <!-- Tab 1: 教材管理 -->
+    <div class="tab-pane fade show active" id="tab-textbooks">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">教材列表</h5>
+                <button class="btn btn-sm btn-primary" onclick="showTextbookForm()">
+                    <i class="bi bi-plus-circle"></i> 添加教材
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="textbookTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th><th>书名</th><th>作者</th><th>版次</th><th>出版社</th><th>年份</th><th>层次</th><th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="textbookTbody">
+                            <tr><td colspan="8" class="text-center text-muted">加载中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 2: 疾病管理 -->
+    <div class="tab-pane fade" id="tab-diseases">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">疾病列表</h5>
+                <div class="d-flex gap-2">
+                    <select class="form-select form-select-sm" id="diseaseSystemFilter" onchange="loadDiseases()">
+                        <option value="">全部系统</option>
+                    </select>
+                    <select class="form-select form-select-sm" id="diseaseLevelFilter" onchange="loadDiseases()">
+                        <option value="all">全部级别</option>
+                        <option value="undergraduate">本科</option>
+                        <option value="graduate">研究生</option>
+                    </select>
+                    <button class="btn btn-sm btn-primary" onclick="showDiseaseForm()">
+                        <i class="bi bi-plus-circle"></i> 添加疾病
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="diseaseTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th><th>疾病名</th><th>英文名</th><th>所属系统</th><th>级别</th><th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="diseaseTbody">
+                            <tr><td colspan="6" class="text-center text-muted">加载中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 3: 内容管理 -->
+    <div class="tab-pane fade" id="tab-infos">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">疾病信息条目</h5>
+                <button class="btn btn-sm btn-primary" onclick="showInfoForm()">
+                    <i class="bi bi-plus-circle"></i> 添加信息条目
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <select class="form-select form-select-sm" id="infoDiseaseFilter" onchange="loadDiseaseInfos()">
+                            <option value="">全部疾病</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select form-select-sm" id="infoTypeFilter" onchange="loadDiseaseInfos()">
+                            <option value="">全部类型</option>
+                            {% for key, cfg in INFO_TYPE_OPTIONS.items() %}
+                            <option value="{{ key }}">{{ cfg.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover" id="infoTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th><th>疾病</th><th>类型</th><th>内容摘要</th><th>来源教材</th><th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="infoTbody">
+                            <tr><td colspan="6" class="text-center text-muted">加载中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 4: 症状管理 -->
+    <div class="tab-pane fade" id="tab-symptoms">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">症状词汇库</h5>
+                <button class="btn btn-sm btn-primary" onclick="showSymptomForm()">
+                    <i class="bi bi-plus-circle"></i> 添加症状
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="symptomTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th><th>症状名</th><th>英文名</th><th>分类</th><th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="symptomTbody">
+                            <tr><td colspan="5" class="text-center text-muted">加载中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 5: 批量导入 -->
+    <div class="tab-pane fade" id="tab-import">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">批量导入教材内容</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6>导入说明：</h6>
+                    <ol class="small text-muted">
+                        <li>将Markdown（.md）或JSON（.json）格式的数据文件放入 <code>data/</code> 目录</li>
+                        <li>Markdown格式请参考 <code>data/textbook_10th/organized/</code> 中的文件</li>
+                        <li>点击下方按钮执行导入，系统将自动解析并写入数据库</li>
+                        <li>已存在的内容不会被重复导入</li>
+                    </ol>
+                </div>
+                <button class="btn btn-success btn-lg" onclick="runImport()">
+                    <i class="bi bi-cloud-upload"></i> 开始导入
+                </button>
+                <div id="importResult" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 6: 上传电子书/Word ==== -->
+    <div class="tab-pane fade" id="tab-upload">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">📤 上传电子教材（PDF / Word）</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- 上传新教材 -->
+                    <div class="col-md-6 border-end">
+                        <h6>🆕 上传为新教材</h6>
+                        <p class="small text-muted">上传PDF或Word文档，自动提取文本并创建为新教材</p>
+                        <div class="mb-3">
+                            <label class="form-label">选择文件 (.pdf / .docx)</label>
+                            <input type="file" class="form-control" id="uploadFileNew" accept=".pdf,.docx">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">教材名称</label>
+                            <input type="text" class="form-control" id="uploadNameNew" placeholder="自动从文件名提取，也可手动修改">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">作者</label>
+                            <input type="text" class="form-control" id="uploadAuthorNew" placeholder="如：葛均波">
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label class="form-label">版次</label>
+                                <input type="text" class="form-control" id="uploadEditionNew" value="第10版">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">层次</label>
+                                <select class="form-select" id="uploadLevelNew">
+                                    <option value="undergraduate">本科</option>
+                                    <option value="graduate">研究生</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary w-100" onclick="uploadTextbook('new')">
+                            <i class="bi bi-cloud-arrow-up"></i> 上传并创建新教材
+                        </button>
+                        <div id="uploadResultNew" class="mt-2"></div>
+                    </div>
+
+                    <!-- 追加到已有教材 -->
+                    <div class="col-md-6">
+                        <h6>➕ 追加到已有教材</h6>
+                        <p class="small text-muted">将文件内容追加到已在系统中的教材名下</p>
+                        <div class="mb-3">
+                            <label class="form-label">选择文件 (.pdf / .docx)</label>
+                            <input type="file" class="form-control" id="uploadFileAppend" accept=".pdf,.docx">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">目标教材</label>
+                            <select class="form-select" id="uploadTargetTextbook">
+                                <option value="">选择已有教材...</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-outline-primary w-100" onclick="uploadTextbook('append')">
+                            <i class="bi bi-plus-circle"></i> 追加到已有教材
+                        </button>
+                        <div id="uploadResultAppend" class="mt-2"></div>
+                    </div>
+                </div>
+
+                <!-- 上传进度 -->
+                <div id="uploadProgress" class="mt-3" style="display:none;">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:100%">
+                            处理中...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================
+模态框 — 用于教材/疾病/信息/症状的编辑表单
+由JS动态填充
+============================================ -->
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="editModalContent">
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/common.js') }}"></script>
+<script>
+// ============================================
+// 管理后台JS — 所有CRUD操作
+// ============================================
+
+const API = {
+    textbooks: '/api/textbooks',
+    diseases: '/api/diseases',
+    diseaseInfos: '/api/disease-infos',
+    symptoms: '/api/symptoms/manage',
+    systems: '/api/systems',
+    import: '/api/import',
+    stats: '/api/stats'
+};
+
+const LEVEL_LABELS = { undergraduate: '本科', graduate: '研究生' };
+const INFO_LABELS = {
+    definition: '定义', pathogenesis: '发病机制', prevention: '预防原则',
+    treatment: '治疗方案', differential_diagnosis: '鉴别诊断'
+};
+
+// --- 页面初始化 ---
+document.addEventListener('DOMContentLoaded', function() {
+    loadStats();
+    loadTextbooks();
+    loadDiseases();
+    loadDiseaseInfos();
+    loadSymptoms();
+    loadSystemOptions();
+});
+
+// --- 加载统计 ---
+function loadStats() {
+    fetch(API.stats).then(r => r.json()).then(d => {
+        document.getElementById('statTextbooks').textContent = d.textbook_count;
+        document.getElementById('statDiseases').textContent = d.disease_count;
+        document.getElementById('statInfos').textContent = d.disease_info_count;
+        document.getElementById('statSymptoms').textContent = d.symptom_count;
+    });
+}
+
+// --- 加载系统列表选项 ---
+function loadSystemOptions() {
+    fetch(API.systems).then(r => r.json()).then(systems => {
+        const sel1 = document.getElementById('diseaseSystemFilter');
+        const sel2 = document.getElementById('infoDiseaseFilter');
+        systems.forEach(s => {
+            sel1.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+        });
+        // infoDiseaseFilter需要疾病列表，稍后填充
+    });
+}
+
+// --- 教材CRUD ---
+function loadTextbooks() {
+    fetch(API.textbooks).then(r => r.json()).then(data => {
+        const tbody = document.getElementById('textbookTbody');
+        tbody.innerHTML = data.map(t => `
+            <tr>
+                <td>${t.id}</td><td>${t.title}</td><td>${t.author || '-'}</td>
+                <td>${t.edition || '-'}</td><td>${t.publisher || '-'}</td>
+                <td>${t.year || '-'}</td><td>${LEVEL_LABELS[t.level] || t.level}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="editTextbook(${t.id})">编辑</button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteTextbook(${t.id})">删除</button>
+                </td>
+            </tr>
+        `).join('');
+    });
+}
+
+function showTextbookForm(id) {
+    const isEdit = !!id;
+    const title = isEdit ? '编辑教材' : '添加教材';
+    fetch(isEdit ? `${API.textbooks}/${id}` : API.textbooks).then(r => r.json()).then(data => {
+        const item = isEdit ? data : {};
+        document.getElementById('editModalContent').innerHTML = `
+            <div class="modal-header"><h5 class="modal-title">${title}</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="row g-2">
+                    <div class="col-md-8"><label class="form-label">书名 *</label>
+                        <input class="form-control" id="tbTitle" value="${item.title || ''}"></div>
+                    <div class="col-md-4"><label class="form-label">层次 *</label>
+                        <select class="form-select" id="tbLevel">
+                            <option value="undergraduate" ${item.level==='undergraduate'?'selected':''}>本科</option>
+                            <option value="graduate" ${item.level==='graduate'?'selected':''}>研究生</option>
+                        </select></div>
+                    <div class="col-md-6"><label class="form-label">作者</label>
+                        <input class="form-control" id="tbAuthor" value="${item.author || ''}"></div>
+                    <div class="col-md-3"><label class="form-label">版次</label>
+                        <input class="form-control" id="tbEdition" value="${item.edition || ''}"></div>
+                    <div class="col-md-3"><label class="form-label">年份</label>
+                        <input class="form-control" type="number" id="tbYear" value="${item.year || ''}"></div>
+                    <div class="col-md-6"><label class="form-label">出版社</label>
+                        <input class="form-control" id="tbPublisher" value="${item.publisher || ''}"></div>
+                    <div class="col-md-6"><label class="form-label">ISBN</label>
+                        <input class="form-control" id="tbIsbn" value="${item.isbn || ''}"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button class="btn btn-primary" onclick="saveTextbook(${isEdit ? id : 'null'})">保存</button>
+            </div>`;
+        new bootstrap.Modal(document.getElementById('editModal')).show();
+    });
+}
+
+function saveTextbook(id) {
+    const data = {
+        title: document.getElementById('tbTitle').value,
+        level: document.getElementById('tbLevel').value,
+        author: document.getElementById('tbAuthor').value,
+        edition: document.getElementById('tbEdition').value,
+        year: document.getElementById('tbYear').value || null,
+        publisher: document.getElementById('tbPublisher').value,
+        isbn: document.getElementById('tbIsbn').value,
+    };
+    if (!data.title) return alert('书名不能为空');
+    const url = id ? `${API.textbooks}/${id}` : API.textbooks;
+    const method = id ? 'PUT' : 'POST';
+    fetch(url, { method, headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) })
+        .then(r => r.json()).then(() => {
+            bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+            loadTextbooks(); loadStats();
+        });
+}
+
+function editTextbook(id) { showTextbookForm(id); }
+
+function deleteTextbook(id) {
+    if (!confirm('确定删除该教材及其所有关联内容？此操作不可撤销！')) return;
+    fetch(`${API.textbooks}/${id}`, { method: 'DELETE' })
+        .then(() => { loadTextbooks(); loadStats(); });
+}
+
+// --- 疾病CRUD ---
+function loadDiseases() {
+    const systemId = document.getElementById('diseaseSystemFilter').value;
+    const level = document.getElementById('diseaseLevelFilter').value;
+    let url = API.diseases + '?';
+    if (systemId) url += `system_id=${systemId}&`;
+    if (level !== 'all') url += `level=${level}&`;
+    fetch(url).then(r => r.json()).then(data => {
+        const tbody = document.getElementById('diseaseTbody');
+        tbody.innerHTML = data.map(d => `
+            <tr>
+                <td>${d.id}</td><td><strong>${d.name}</strong></td><td>${d.name_en || '-'}</td>
+                <td>${d.system_name || '-'}</td><td>${LEVEL_LABELS[d.level] || d.level}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="editDisease(${d.id})">编辑</button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteDisease(${d.id})">删除</button>
+                </td>
+            </tr>
+        `).join('');
+        // 同时更新infoDiseaseFilter
+        const sel = document.getElementById('infoDiseaseFilter');
+        sel.innerHTML = '<option value="">全部疾病</option>' + data.map(d =>
+            `<option value="${d.id}">${d.name} (${d.system_name || ''})</option>`
+        ).join('');
+    });
+}
+
+function showDiseaseForm(id) {
+    const isEdit = !!id;
+    fetch(API.systems).then(r => r.json()).then(systems => {
+        const sysOptions = systems.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+        const item = {};
+        if (isEdit) {
+            fetch(`${API.diseases}/${id}`).then(r => r.json()).then(d => {
+                buildForm(d);
+            });
+        } else {
+            buildForm(item);
+        }
+        function buildForm(d) {
+            document.getElementById('editModalContent').innerHTML = `
+                <div class="modal-header"><h5 class="modal-title">${isEdit ? '编辑' : '添加'}疾病</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <div class="row g-2">
+                        <div class="col-md-7"><label class="form-label">疾病名称 *</label>
+                            <input class="form-control" id="dName" value="${d.name || ''}"></div>
+                        <div class="col-md-5"><label class="form-label">英文名</label>
+                            <input class="form-control" id="dNameEn" value="${d.name_en || ''}"></div>
+                        <div class="col-md-4"><label class="form-label">所属系统 *</label>
+                            <select class="form-select" id="dSystem">${sysOptions}</select></div>
+                        <div class="col-md-4"><label class="form-label">层次 *</label>
+                            <select class="form-select" id="dLevel">
+                                <option value="undergraduate">本科</option>
+                                <option value="graduate">研究生</option>
+                            </select></div>
+                        <div class="col-md-12"><label class="form-label">概述</label>
+                            <textarea class="form-control" id="dOverview" rows="3">${d.overview || ''}</textarea></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button class="btn btn-primary" onclick="saveDisease(${isEdit ? id : 'null'})">保存</button>
+                </div>`;
+            if (d.system_id) document.getElementById('dSystem').value = d.system_id;
+            if (d.level) document.getElementById('dLevel').value = d.level;
+            new bootstrap.Modal(document.getElementById('editModal')).show();
+        }
+    });
+}
+
+function saveDisease(id) {
+    const data = {
+        name: document.getElementById('dName').value,
+        name_en: document.getElementById('dNameEn').value,
+        system_id: parseInt(document.getElementById('dSystem').value),
+        level: document.getElementById('dLevel').value,
+        overview: document.getElementById('dOverview').value,
+    };
+    if (!data.name || !data.system_id) return alert('疾病名称和所属系统不能为空');
+    const url = id ? `${API.diseases}/${id}` : API.diseases;
+    const method = id ? 'PUT' : 'POST';
+    fetch(url, { method, headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) })
+        .then(r => r.json()).then(() => {
+            bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+            loadDiseases(); loadStats();
+        });
+}
+
+function editDisease(id) { showDiseaseForm(id); }
+
+function deleteDisease(id) {
+    if (!confirm('确定删除该疾病及其所有详细信息？')) return;
+    fetch(`${API.diseases}/${id}`, { method: 'DELETE' })
+        .then(() => { loadDiseases(); loadDiseaseInfos(); loadStats(); });
+}
+
+// --- 信息条目CRUD ---
+function loadDiseaseInfos() {
+    const diseaseId = document.getElementById('infoDiseaseFilter').value;
+    const infoType = document.getElementById('infoTypeFilter').value;
+    let url = API.diseaseInfos + '?';
+    if (diseaseId) url += `disease_id=${diseaseId}&`;
+    if (infoType) url += `info_type=${infoType}&`;
+    fetch(url).then(r => r.json()).then(data => {
+        const tbody = document.getElementById('infoTbody');
+        tbody.innerHTML = data.map(info => `
+            <tr>
+                <td>${info.id}</td><td>${info.disease_id}</td>
+                <td>${INFO_LABELS[info.info_type] || info.info_type}</td>
+                <td><small>${(info.content || '').substring(0, 80)}...</small></td>
+                <td><small>${info.citation || ''}</small></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="editInfo(${info.id})">编辑</button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteInfo(${info.id})">删除</button>
+                </td>
+            </tr>
+        `).join('');
+    });
+}
+
+function showInfoForm(id) {
+    const isEdit = !!id;
+    Promise.all([
+        fetch(API.diseases).then(r => r.json()),
+        fetch(API.textbooks).then(r => r.json())
+    ]).then(([diseases, textbooks]) => {
+        const dOpts = diseases.map(d => `<option value="${d.id}">${d.name} (${d.system_name || ''})</option>`).join('');
+        const tOpts = textbooks.map(t => `<option value="${t.id}">${t.title} (${LEVEL_LABELS[t.level]})</option>`).join('');
+        const itOpts = Object.entries(INFO_LABELS).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
+        const item = {};
+        const loadItem = isEdit ? fetch(`${API.diseaseInfos}/${id}`).then(r => r.json()) : Promise.resolve(item);
+        loadItem.then(info => {
+            document.getElementById('editModalContent').innerHTML = `
+                <div class="modal-header"><h5 class="modal-title">${isEdit ? '编辑' : '添加'}信息条目</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <div class="row g-2">
+                        <div class="col-md-6"><label class="form-label">疾病 *</label>
+                            <select class="form-select" id="iDisease">${dOpts}</select></div>
+                        <div class="col-md-3"><label class="form-label">信息类型 *</label>
+                            <select class="form-select" id="iType">${itOpts}</select></div>
+                        <div class="col-md-3"><label class="form-label">来源教材 *</label>
+                            <select class="form-select" id="iTextbook">${tOpts}</select></div>
+                        <div class="col-md-6"><label class="form-label">章节引用</label>
+                            <input class="form-control" id="iChapter" value="${info.chapter_ref || ''}"></div>
+                        <div class="col-md-6"><label class="form-label">页码引用</label>
+                            <input class="form-control" id="iPage" value="${info.page_ref || ''}"></div>
+                        <div class="col-12"><label class="form-label">内容 *</label>
+                            <textarea class="form-control" id="iContent" rows="8">${info.content || ''}</textarea></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button class="btn btn-primary" onclick="saveInfo(${isEdit ? id : 'null'})">保存</button>
+                </div>`;
+            if (info.disease_id) document.getElementById('iDisease').value = info.disease_id;
+            if (info.info_type) document.getElementById('iType').value = info.info_type;
+            if (info.textbook_id) document.getElementById('iTextbook').value = info.textbook_id;
+            new bootstrap.Modal(document.getElementById('editModal')).show();
+        });
+    });
+}
+
+function saveInfo(id) {
+    const data = {
+        disease_id: parseInt(document.getElementById('iDisease').value),
+        info_type: document.getElementById('iType').value,
+        textbook_id: parseInt(document.getElementById('iTextbook').value),
+        content: document.getElementById('iContent').value,
+        chapter_ref: document.getElementById('iChapter').value,
+        page_ref: document.getElementById('iPage').value,
+    };
+    if (!data.disease_id || !data.info_type || !data.textbook_id || !data.content)
+        return alert('疾病、信息类型、来源教材和内容不能为空');
+    const url = id ? `${API.diseaseInfos}/${id}` : API.diseaseInfos;
+    const method = id ? 'PUT' : 'POST';
+    fetch(url, { method, headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) })
+        .then(r => r.json()).then(() => {
+            bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+            loadDiseaseInfos(); loadStats();
+        });
+}
+
+function editInfo(id) { showInfoForm(id); }
+
+function deleteInfo(id) {
+    if (!confirm('确定删除该信息条目？')) return;
+    fetch(`${API.diseaseInfos}/${id}`, { method: 'DELETE' })
+        .then(() => { loadDiseaseInfos(); loadStats(); });
+}
+
+// --- 症状CRUD ---
+function loadSymptoms() {
+    fetch(API.symptoms).then(r => r.json()).then(data => {
+        const tbody = document.getElementById('symptomTbody');
+        tbody.innerHTML = data.map(s => `
+            <tr>
+                <td>${s.id}</td><td>${s.name}</td><td>${s.name_en || '-'}</td><td>${s.category || '-'}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="editSymptom(${s.id})">编辑</button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteSymptom(${s.id})">删除</button>
+                </td>
+            </tr>
+        `).join('');
+    });
+}
+
+function showSymptomForm(id) {
+    const isEdit = !!id;
+    fetch(isEdit ? `${API.symptoms}/${id}` : API.symptoms).then(r => r.json()).then(data => {
+        const item = isEdit ? data : {};
+        document.getElementById('editModalContent').innerHTML = `
+            <div class="modal-header"><h5 class="modal-title">${isEdit ? '编辑' : '添加'}症状</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="row g-2">
+                    <div class="col-md-6"><label class="form-label">症状名称 *</label>
+                        <input class="form-control" id="sName" value="${item.name || ''}"></div>
+                    <div class="col-md-6"><label class="form-label">英文名</label>
+                        <input class="form-control" id="sNameEn" value="${item.name_en || ''}"></div>
+                    <div class="col-md-12"><label class="form-label">分类</label>
+                        <input class="form-control" id="sCategory" value="${item.category || ''}"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button class="btn btn-primary" onclick="saveSymptom(${isEdit ? id : 'null'})">保存</button>
+            </div>`;
+        new bootstrap.Modal(document.getElementById('editModal')).show();
+    });
+}
+
+function saveSymptom(id) {
+    const data = {
+        name: document.getElementById('sName').value,
+        name_en: document.getElementById('sNameEn').value,
+        category: document.getElementById('sCategory').value,
+    };
+    if (!data.name) return alert('症状名称不能为空');
+    const url = id ? `${API.symptoms}/${id}` : API.symptoms;
+    const method = id ? 'PUT' : 'POST';
+    fetch(url, { method, headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) })
+        .then(r => r.json()).then(() => {
+            bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+            loadSymptoms(); loadStats();
+        });
+}
+
+function editSymptom(id) { showSymptomForm(id); }
+
+function deleteSymptom(id) {
+    if (!confirm('确定删除该症状？')) return;
+    fetch(`${API.symptoms}/${id}`, { method: 'DELETE' })
+        .then(() => { loadSymptoms(); loadStats(); });
+}
+
+// --- 批量导入 ---
+function runImport() {
+    if (!confirm('开始从data/目录导入数据？已有的内容不会被重复导入。')) return;
+    const btn = event.target;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> 导入中...';
+    fetch(API.import, { method: 'POST' }).then(r => r.json()).then(data => {
+        const resultDiv = document.getElementById('importResult');
+        if (data.error) {
+            resultDiv.innerHTML = `<div class="alert alert-danger">导入失败: ${data.error}</div>`;
+        } else {
+            resultDiv.innerHTML = `
+                <div class="alert alert-success">
+                    <h6>导入完成！</h6>
+                    <ul class="mb-0">
+                        <li>处理文件: ${data.files_processed}</li>
+                        <li>新增教材: ${data.textbooks_added}</li>
+                        <li>新增疾病: ${data.diseases_added}</li>
+                        <li>新增信息条目: ${data.disease_infos_added}</li>
+                        <li>新增症状: ${data.symptoms_added}</li>
+                    </ul>
+                </div>`;
+            loadStats(); loadTextbooks(); loadDiseases(); loadDiseaseInfos(); loadSymptoms();
+        }
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-cloud-upload"></i> 开始导入';
+    });
+}
+
+// ===== 上传教材功能 =====
+function loadTextbookDropdown() {
+    fetch(API.textbooks)
+        .then(r => r.json())
+        .then(data => {
+            const sel = document.getElementById('uploadTargetTextbook');
+            if (!sel) return;
+            sel.innerHTML = '<option value="">选择已有教材...</option>' +
+                data.map(t => `<option value="${t.title}">${t.title} (${t.edition||''})</option>`).join('');
+        });
+}
+
+// 监听上传tab切换，加载教材列表
+document.querySelector('button[data-bs-target="#tab-upload"]')?.addEventListener('shown.bs.tab', function() {
+    loadTextbookDropdown();
+});
+
+async function uploadTextbook(mode) {
+    const fileInput = document.getElementById(mode === 'new' ? 'uploadFileNew' : 'uploadFileAppend');
+    const resultDiv = document.getElementById(mode === 'new' ? 'uploadResultNew' : 'uploadResultAppend');
+    const progressDiv = document.getElementById('uploadProgress');
+
+    if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+        resultDiv.innerHTML = '<div class="alert alert-warning py-2 small">请先选择文件</div>';
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (ext !== 'pdf' && ext !== 'docx') {
+        resultDiv.innerHTML = '<div class="alert alert-danger py-2 small">仅支持PDF和Word(.docx)文件</div>';
+        return;
+    }
+
+    // Show progress
+    if (progressDiv) progressDiv.style.display = 'block';
+    resultDiv.innerHTML = '';
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    if (mode === 'new') {
+        const name = document.getElementById('uploadNameNew')?.value?.trim();
+        const author = document.getElementById('uploadAuthorNew')?.value?.trim();
+        const edition = document.getElementById('uploadEditionNew')?.value?.trim();
+        const level = document.getElementById('uploadLevelNew')?.value;
+        if (name) formData.append('append_to_existing', '');
+        if (author) formData.append('author', author);
+        if (edition) formData.append('edition', edition);
+        if (level) formData.append('level', level);
+    } else {
+        const target = document.getElementById('uploadTargetTextbook')?.value;
+        if (!target) {
+            resultDiv.innerHTML = '<div class="alert alert-warning py-2 small">请选择目标教材</div>';
+            if (progressDiv) progressDiv.style.display = 'none';
+            return;
+        }
+        formData.append('append_to_existing', target);
+    }
+
+    try {
+        const resp = await fetch('/api/upload-textbook', { method: 'POST', body: formData });
+        const data = await resp.json();
+
+        if (progressDiv) progressDiv.style.display = 'none';
+
+        if (resp.ok) {
+            resultDiv.innerHTML = `<div class="alert alert-success py-2 small">
+                ✅ ${data.message}<br>
+                提取 ${data.pages_extracted} 页 · 教材: ${data.textbook?.title||'未知'}
+            </div>`;
+            // Refresh all data
+            loadStats(); loadTextbooks(); loadDiseases(); loadDiseaseInfos(); loadSymptoms();
+        } else {
+            resultDiv.innerHTML = `<div class="alert alert-danger py-2 small">❌ ${data.error||data.message||'上传失败'}</div>`;
+        }
+    } catch (e) {
+        if (progressDiv) progressDiv.style.display = 'none';
+        resultDiv.innerHTML = `<div class="alert alert-danger py-2 small">❌ 网络错误: ${e.message}</div>`;
+    }
+}
+</script>
+{% endblock %}

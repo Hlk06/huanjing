@@ -1,0 +1,176 @@
+<!--
+  differential.html — 鉴别诊断对比页面
+  作用: 并排对比同系统兄弟疾病的关键特征
+  展示相似症状、关键区别点、确诊检查
+-->
+{% extends 'base.html' %}
+{% block title %}{{ disease.name }} - 鉴别诊断对比{% endblock %}
+
+{% block content %}
+<!-- 面包屑 -->
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">首页</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('browse', system_id=disease.system_id) }}">{{ disease.system.name }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('disease_detail', disease_id=disease.id) }}">{{ disease.name }}</a></li>
+        <li class="breadcrumb-item active">鉴别诊断对比</li>
+    </ol>
+</nav>
+
+<!-- 当前疾病 -->
+<div class="card shadow-sm mb-4 border-primary">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-clipboard2-pulse"></i> 目标疾病：{{ disease.name }}</h5>
+        <span class="badge bg-light text-primary">{{ LEVEL_OPTIONS[disease.level]['label'] }}</span>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h6>症状</h6>
+                <div class="d-flex flex-wrap gap-1 mb-3">
+                    {% for s in disease.get_symptoms() %}
+                    <span class="badge symptom-tag symptom-{{ s.relevance }}">{{ s.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h6>定义</h6>
+                <p class="small text-muted">{{ disease.overview[:200] if disease.overview else '暂无' }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================
+鉴别诊断对比表格
+============================================ -->
+<h5 class="mb-3"><i class="bi bi-table"></i> 同系统疾病鉴别对比表</h5>
+
+{% if siblings %}
+<div class="table-responsive">
+    <table class="table table-bordered table-hover shadow-sm" id="diffTable">
+        <thead class="table-light">
+            <tr>
+                <th style="min-width:160px">对比维度</th>
+                <th style="min-width:220px" class="table-primary">
+                    <strong>{{ disease.name }}</strong>
+                    <span class="badge bg-primary ms-1">本疾病</span>
+                </th>
+                {% for sib in siblings %}
+                <th style="min-width:180px">
+                    <a href="{{ url_for('disease_detail', disease_id=sib.disease.id) }}" class="text-decoration-none">
+                        {{ sib.disease.name }}
+                    </a>
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 定义对比 -->
+            <tr>
+                <td class="fw-bold bg-light">定义</td>
+                <td class="table-primary small">{{ disease.overview[:150] if disease.overview else '-' }}</td>
+                {% for sib in siblings %}
+                <td class="small">{{ sib.definition[:150] if sib.definition else '-' }}</td>
+                {% endfor %}
+            </tr>
+            <!-- 主要症状对比 -->
+            <tr>
+                <td class="fw-bold bg-light">主要症状</td>
+                <td class="table-primary">
+                    {% set main_symptoms = disease.get_main_symptoms() %}
+                    {% if main_symptoms %}
+                        {% for s in main_symptoms %}
+                        <span class="badge symptom-tag symptom-main me-1">{{ s.name }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <span class="text-muted">-</span>
+                    {% endif %}
+                </td>
+                {% for sib in siblings %}
+                <td>
+                    {% set sib_main = [] %}
+                    {% for s in sib.symptoms %}
+                        {% if s.relevance == 'main' %}{% set _ = sib_main.append(s.name) %}{% endif %}
+                    {% endfor %}
+                    {% if sib_main %}
+                        {% for sm in sib_main[:5] %}
+                        <span class="badge symptom-tag symptom-main me-1">{{ sm }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <span class="text-muted">-</span>
+                    {% endif %}
+                </td>
+                {% endfor %}
+            </tr>
+            <!-- 全部症状对比 -->
+            <tr>
+                <td class="fw-bold bg-light">全部关联症状</td>
+                <td class="table-primary">
+                    {% for s in disease.get_symptoms() %}
+                    <span class="badge symptom-tag symptom-{{ s.relevance }} me-1 mb-1">{{ s.name }}</span>
+                    {% endfor %}
+                </td>
+                {% for sib in siblings %}
+                <td>
+                    {% for s in sib.symptoms[:8] %}
+                    <span class="badge symptom-tag symptom-{{ s.relevance }} me-1 mb-1">{{ s.name }}</span>
+                    {% endfor %}
+                </td>
+                {% endfor %}
+            </tr>
+            <!-- 诊断关键词对比 -->
+            <tr>
+                <td class="fw-bold bg-light">关键诊断特征</td>
+                <td class="table-primary">
+                    <a href="{{ url_for('disease_detail', disease_id=disease.id) }}" class="btn btn-sm btn-outline-primary">
+                        查看详情 <i class="bi bi-arrow-right"></i>
+                    </a>
+                </td>
+                {% for sib in siblings %}
+                <td>
+                    <a href="{{ url_for('disease_detail', disease_id=sib.disease.id) }}" class="btn btn-sm btn-outline-secondary">
+                        查看详情 <i class="bi bi-arrow-right"></i>
+                    </a>
+                </td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info">
+    <i class="bi bi-info-circle"></i> 该系统中暂无其他疾病进行对比。补充更多内容后将自动生成对比表。
+</div>
+{% endif %}
+
+<!-- ============================================
+原始鉴别诊断内容
+============================================ -->
+{% if diff_infos %}
+<h5 class="mb-3 mt-4"><i class="bi bi-journal-text"></i> 教材鉴别诊断原文</h5>
+{% for info in diff_infos %}
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        <div class="info-content" style="line-height:1.9; font-size:0.95rem;">
+            {{ info.content | replace('\n', '<br>') | safe }}
+        </div>
+        <div class="citation-box mt-3">
+            <span class="citation-icon">📚</span>
+            <span>{{ info.get_citation() }}</span>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+
+<!-- 底部导航 -->
+<div class="d-flex justify-content-between mt-4">
+    <a href="{{ url_for('disease_detail', disease_id=disease.id) }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> 返回疾病详情
+    </a>
+    <a href="{{ url_for('mindmap', system_id=disease.system_id) }}" class="btn btn-outline-primary">
+        <i class="bi bi-diagram-2"></i> 思维导图
+    </a>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+# Claude / AI assistant
+.claude/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Database (auto-generated from markdown)
+medical.db
+
+# Extracted PDF pages (very large, auto-generated)
+_pages/
+pages_data/
+
+# IDE
+.vscode/
+build/
+
+# Temp scripts
+batch_extract.py
+continue_build.py
+deep_scan.py
+enrich_anatomy.py
+expand_more.py
+extract_pediatric_dx.py
+fill_all_diseases.py
+fill_batch2.py
+final_build_all.py
+final_build.py
+final_cleanup.py
+final_round.py
+final_pass.py
+finishing_touch.py
+master_import.py
+master_build.py
+move_pages.py
+optimize_round.py
+phase*
+read_toc_clean.py
+re_extract*
+reprocess_keybooks.py
+scan_all_diseases.py
+systematic_build.py
+test_*
+update_lib.py
+freeze.py
+import_now.py
+rebuild.py
+start.py
+go_now.py
+ok.py
+quick_import.py
+run.py
+run_all.py
+run_import.py
+updater.py

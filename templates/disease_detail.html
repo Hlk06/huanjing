@@ -1,0 +1,224 @@
+<!-- disease_detail.html — 疾病详情页 (Stitch v3 温馨静谧版) -->
+{% extends 'base.html' %}
+{% block title %}{{ disease.name }} · 温馨学习空间{% endblock %}
+
+{% block content %}
+<!-- 面包屑 -->
+<nav aria-label="breadcrumb" class="mb-2">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">🌿 首页</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('browse', system_id=disease.system_id) }}">{{ disease.system.name }}</a></li>
+        <li class="breadcrumb-item active">{{ disease.name }}</li>
+    </ol>
+</nav>
+
+<!-- 疾病标题区 -->
+<div class="row mb-3 disease-detail-header">
+    <div class="col-lg-8">
+        <h2 class="fw-bold mb-1" style="color: #3d3029; font-size: 1.35rem;">{{ disease.name }}</h2>
+        {% if disease.name_en %}
+        <p style="color: #a89888; font-style: italic; font-size: 0.85rem;">{{ disease.name_en }}</p>
+        {% endif %}
+
+        <div class="mb-3">
+            <span class="badge" style="background: #7a9e8f; color: #fff; font-size: 0.75rem;">{{ disease.system.name }}</span>
+            <span class="badge ms-1" style="font-size:0.75rem;
+                {% if disease.level == 'undergraduate' %}background: #8bae9b; color: #fff;
+                {% else %}background: #b8a9c9; color: #fff;{% endif %}">
+                {{ LEVEL_OPTIONS[disease.level]['label'] }}
+            </span>
+        </div>
+
+        {% if disease.overview %}
+        <div class="alert" style="background: #fdfbf8; border: 1px solid #e8dfd5; color: #5d5040; border-radius: 12px;">
+            <strong>📋 概述：</strong>{{ disease.overview }}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- 关联症状卡片 -->
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0" style="border-radius: 14px;">
+            <div class="card-header" style="background: #faf7f2; border-bottom: 1px solid #e8dfd5; border-radius: 14px 14px 0 0 !important;">
+                <h6 class="mb-0" style="color: #5a8070;">🏷️ 关联症状</h6>
+            </div>
+            <div class="card-body" style="padding: 14px;">
+                {% if symptoms %}
+                    {% for s in symptoms %}
+                    <span class="badge symptom-tag symptom-{{ s.relevance }} me-1 mb-1" style="font-size: 0.75rem;">
+                        {{ s.name }}
+                        {% if s.relevance == 'main' %}<small>（主要）</small>{% endif %}
+                    </span>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: #c4b8ab; font-size: 0.82rem; margin: 0;">暂无关联症状</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 知识体系Tab区 -->
+<div class="card shadow-sm border-0" style="border-radius: 14px;">
+    <div class="card-header bg-white p-0" style="border-radius: 14px 14px 0 0 !important;">
+        <div class="nav-tabs-wrapper" style="overflow-x: auto; white-space: nowrap; padding: 0 4px;">
+            <ul class="nav nav-tabs card-header-tabs flex-nowrap" id="infoTabs" role="tablist"
+                style="min-width: max-content; border-bottom: 2px solid #e8dfd5;">
+                {% for info_type, config in (INFO_TYPE_OPTIONS.items()|sort(attribute='1.order')) %}
+                {% set has_content = infos.get(info_type) and infos[info_type]|length > 0 %}
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if loop.first %}active{% endif %}"
+                            id="tab-{{ info_type }}"
+                            data-bs-toggle="tab"
+                            data-bs-target="#content-{{ info_type }}"
+                            type="button" role="tab"
+                            style="font-size: 0.85rem; padding: 12px 16px;
+                                   {% if has_content %}color: #5a8070; font-weight: 600;{% else %}color: #c4b8ab;{% endif %}">
+                        {{ config.icon }} {{ config.label }}
+                        {% if has_content %}
+                        <span class="badge ms-1" style="font-size: 0.65rem; background: #7a9e8f; color: #fff;">{{ infos[info_type]|length }}</span>
+                        {% endif %}
+                    </button>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="card-body" style="padding: 20px;">
+        <div class="tab-content" id="infoTabsContent">
+            {% for info_type, config in (INFO_TYPE_OPTIONS.items()|sort(attribute='1.order')) %}
+            <div class="tab-pane fade {% if loop.first %}show active{% endif %}"
+                 id="content-{{ info_type }}"
+                 role="tabpanel">
+
+                <h4 class="mb-3 d-flex align-items-center justify-content-between" style="color: #5a8070; font-size: 1.05rem;">
+                    <span>{{ config.icon }} {{ config.label }}</span>
+                    <button class="btn btn-sm text-white" style="font-size:0.7rem;background:#5a8070;border-radius:6px"
+                            onclick="showAddInfoModal('{{ info_type }}','{{ config.label }}')">＋ 添加</button>
+                </h4>
+
+                {% if infos[info_type] %}
+                    {% for info in infos[info_type] %}
+                    <div class="info-block mb-3 p-3">
+                        <div class="info-content mb-3">
+                            {{ info.content | replace('\n', '<br>') | safe }}
+                        </div>
+
+                        <!-- 来源引用 -->
+                        <div class="citation-box">
+                            <div class="d-flex align-items-start">
+                                <span class="citation-icon">📚</span>
+                                <div class="flex-grow-1">
+                                    <strong style="color: #7a9e8f;">来源：</strong>
+                                    <span>{{ info.get_citation() }}</span>
+                                    {% if info.textbook.level %}
+                                    <span class="badge ms-2" style="font-size: 0.7rem;
+                                        {% if info.textbook.level == 'undergraduate' %}background: #7a9e8f; color: #fff;
+                                        {% else %}background: #b8a9c9; color: #fff;{% endif %}">
+                                        {{ LEVEL_OPTIONS[info.textbook.level]['label'] }}
+                                    </span>
+                                    {% endif %}
+                                    {% if info.page_id %}
+                                    <a href="{{ url_for('view_page', page_id=info.page_id) }}"
+                                       class="btn btn-sm ms-2" target="_blank"
+                                       style="border-color: #d4b896; color: #c8956c; border-radius: 8px; font-size: 0.72rem;"
+                                       title="查看教材原文第{{ info.page_number }}页">
+                                        📖 查看原文 P{{ info.page_number }}
+                                    </a>
+                                    {% endif %}
+                                    {% if info.is_verbatim %}
+                                    <span class="badge ms-1" style="font-size: 0.65rem; background: #a3c4b5; color: #fff;">✓ 原文</span>
+                                    {% endif %}
+                                    <!-- 删除按钮 -->
+                                    <button class="btn btn-sm ms-2" onclick="event.stopPropagation();deleteKnowledge({{ info.id }})"
+                                            style="font-size:0.65rem;color:#c0392b;border:1px solid #e8d5d5;border-radius:6px"
+                                            title="删除此知识点">🗑️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <p style="color: #a89888;">该疾病的<strong>{{ config.label }}</strong>信息尚未收录</p>
+                        <button class="btn btn-sm text-white" style="background: #5a8070;border-radius:8px"
+                                onclick="showAddInfoModal('{{ info_type }}','{{ config.label }}')">✨ 添加第一条知识</button>
+                    </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- 底部导航 -->
+<div class="d-flex justify-content-between mt-3">
+    <a href="{{ url_for('browse', system_id=disease.system_id) }}" class="btn btn-outline-secondary">
+        ← 返回{{ disease.system.name }}
+    </a>
+    <a href="{{ url_for('search') }}" class="btn btn-outline-primary">
+        🔍 症状搜索
+    </a>
+</div>
+
+<!-- 添加知识弹窗 -->
+<div class="modal fade" id="addInfoModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content" style="border-radius:14px">
+  <div class="modal-header" style="background:#faf7f2;border-radius:14px 14px 0 0"><h6 class="fw-bold" style="color:#5a8070" id="addInfoTitle">添加知识点</h6><button class="btn-close" data-bs-dismiss="modal"></button></div>
+  <div class="modal-body">
+    <input type="hidden" id="addInfoType">
+    <div class="mb-2"><label class="small">内容 *</label><textarea class="form-control form-control-sm" id="addInfoContent" rows="6" placeholder="请输入知识内容..."></textarea></div>
+    <div class="row mb-2"><div class="col-6"><label class="small">出处页码</label><input class="form-control form-control-sm" id="addInfoPage" placeholder="P234-240"></div><div class="col-6"><label class="small">出处章节</label><input class="form-control form-control-sm" id="addInfoChapter" placeholder="第8章 第3节"></div></div>
+    <div class="mb-2"><label class="small">来源教材</label><select class="form-select form-select-sm" id="addInfoTextbook"><option value="1">内科学 第10版</option></select></div>
+  </div>
+  <div class="modal-footer"><button class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">取消</button><button class="btn btn-sm text-white" style="background:#5a8070" onclick="submitAddInfo()">💾 保存知识点</button></div>
+  <div id="addInfoMsg" class="px-3 pb-2 small"></div>
+</div></div></div>
+
+<script>
+async function showAddInfoModal(it, label) {
+    document.getElementById('addInfoType').value = it;
+    document.getElementById('addInfoTitle').textContent = '📝 ' + label + ' - 添加知识点';
+    document.getElementById('addInfoContent').value = '';
+    document.getElementById('addInfoPage').value = '';
+    document.getElementById('addInfoChapter').value = '';
+    document.getElementById('addInfoMsg').innerHTML = '';
+    try {
+        const sel = document.getElementById('addInfoTextbook');
+        sel.innerHTML = '';
+        const r = await fetch('/api/textbooks'); const tbs = await r.json();
+        tbs.forEach(t => { sel.innerHTML += '<option value="'+t.id+'">'+t.title+' '+ (t.edition||'') + '</option>'; });
+    } catch(e) {}
+    new bootstrap.Modal(document.getElementById('addInfoModal')).show();
+}
+
+async function submitAddInfo() {
+    const c = document.getElementById('addInfoContent').value.trim();
+    const msg = document.getElementById('addInfoMsg');
+    if (!c) { msg.innerHTML = '<span class="text-danger">请输入知识内容</span>'; return; }
+    const body = {
+        disease_id: {{ disease.id }},
+        info_type: document.getElementById('addInfoType').value,
+        content: c,
+        page_ref: document.getElementById('addInfoPage').value.trim(),
+        chapter_ref: document.getElementById('addInfoChapter').value.trim(),
+        textbook_id: parseInt(document.getElementById('addInfoTextbook').value) || 1,
+        is_verbatim: true
+    };
+    try {
+        const r = await fetch('/api/disease-infos', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        if (r.ok) { msg.innerHTML = '<span class="text-success">✅ 已保存！刷新中...</span>'; setTimeout(() => location.reload(), 800); }
+        else { const e = await r.json(); msg.innerHTML = '<span class="text-danger">❌ ' + (e.error||'失败') + '</span>'; }
+    } catch(e) { msg.innerHTML = '<span class="text-danger">网络错误</span>'; }
+}
+
+async function deleteKnowledge(id) {
+    if (!confirm('确定要删除此知识点吗？此操作不可撤销！')) return;
+    try {
+        const r = await fetch('/api/disease-infos/' + id, { method: 'DELETE' });
+        if (r.ok) { location.reload(); } else { alert('删除失败'); }
+    } catch(e) { alert('网络错误'); }
+}
+</script>
+{% endblock %}

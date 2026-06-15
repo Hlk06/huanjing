@@ -1,0 +1,136 @@
+<!-- search.html — 症状搜索页 (Stitch v3 温馨静谧版) -->
+{% extends 'base.html' %}
+{% block title %}症状搜索 · 温馨学习空间{% endblock %}
+
+{% block content %}
+<!-- 搜索区域 -->
+<div class="row justify-content-center mb-3">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0" style="border-radius: 16px;">
+            <div class="card-body p-3 p-md-4">
+                <h4 class="mb-2" style="color: #5a8070; font-size: 1.1rem;">
+                    🔍 症状搜索疾病
+                </h4>
+                <p style="color: #a89888; font-size: 0.82rem; margin-bottom: 12px;">
+                    输入一个或多个症状（用空格或逗号分隔），系统将匹配最相关的疾病
+                </p>
+                <form action="{{ url_for('search') }}" method="GET" id="searchForm">
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text bg-white" style="border-radius: 12px 0 0 12px;">
+                            🔍
+                        </span>
+                        <input type="text" name="q" class="form-control" id="searchInput"
+                               value="{{ query }}" placeholder="例如：胸痛 呼吸困难 心悸…"
+                               autocomplete="off" autofocus
+                               style="font-size: 0.92rem;">
+                        <button class="btn px-4" type="submit"
+                                style="background: #7a9e8f; color: #fff; border-radius: 0 12px 12px 0;">
+                            搜索
+                        </button>
+                    </div>
+                    <!-- 搜索建议下拉 -->
+                    <div id="searchSuggestions" class="dropdown-menu w-100 shadow" style="display:none;"></div>
+                    <!-- 级别筛选 -->
+                    <div class="mt-2 d-flex gap-2 align-items-center">
+                        <small style="color: #a89888;">筛选：</small>
+                        <div class="btn-group btn-group-sm">
+                            <input type="radio" class="btn-check" name="level" id="levelAll" value="all"
+                                   {% if current_level == 'all' %}checked{% endif %}>
+                            <label class="btn btn-outline-secondary" for="levelAll" style="border-radius: 8px;">全部</label>
+
+                            <input type="radio" class="btn-check" name="level" id="levelUG" value="undergraduate"
+                                   {% if current_level == 'undergraduate' %}checked{% endif %}>
+                            <label class="btn btn-outline-secondary" for="levelUG" style="border-radius: 8px;">🎓 本科</label>
+
+                            <input type="radio" class="btn-check" name="level" id="levelPG" value="graduate"
+                                   {% if current_level == 'graduate' %}checked{% endif %}>
+                            <label class="btn btn-outline-secondary" for="levelPG" style="border-radius: 8px; color: #8b7da5; border-color: #b8a9c9;">🔬 研究生</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 搜索结果 -->
+{% if query %}
+<div class="mb-3">
+    <h6 style="color: #5a8070;">
+        搜索 "<strong style="color: #3d3029;">{{ query }}</strong>"
+        {% if current_level != 'all' %}
+        <span class="badge" style="background: #a89888; color: #fff;">{{ LEVEL_OPTIONS[current_level]['label'] }}</span>
+        {% endif %}
+        的结果：共找到 <strong style="color: #c8956c;">{{ results|length }}</strong> 个匹配疾病
+    </h6>
+</div>
+
+{% if results %}
+<div class="row g-3 animate-stagger">
+    {% for disease in results %}
+    <div class="col-md-6">
+        <div class="disease-card-warm" onclick="location.href='{{ url_for('disease_detail', disease_id=disease.id) }}'">
+            <!-- 顶部：名称 + 系统/级别 -->
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="fw-bold" style="font-size: 0.92rem; color: #3d3029;">{{ disease.name }}</span>
+                <div>
+                    <span class="badge me-1" style="font-size: 0.6rem; background: #ddd2c4; color: #7a6e65;">{{ disease.system_name }}</span>
+                    <span class="badge" style="font-size: 0.6rem;
+                        {% if disease.level == 'undergraduate' %}background: #7a9e8f; color: #fff;
+                        {% else %}background: #b8a9c9; color: #fff;{% endif %}">
+                        {{ LEVEL_OPTIONS[disease.level]['label'] }}
+                    </span>
+                </div>
+            </div>
+
+            {% if disease.name_en %}
+            <p style="color: #a89888; font-size: 0.78rem; font-style: italic; margin-bottom: 6px;">{{ disease.name_en }}</p>
+            {% endif %}
+
+            <!-- 匹配症状 -->
+            <div class="mb-2">
+                <small style="color: #7a9e8f;">
+                    ✓ 匹配症状：<strong>{{ disease.matched_symptoms }}</strong>
+                </small>
+            </div>
+
+            {% if disease.overview %}
+            <p class="disease-overview mb-2">
+                {{ disease.overview[:120] }}{% if disease.overview|length > 120 %}…{% endif %}
+            </p>
+            {% endif %}
+
+            <div class="d-flex justify-content-between align-items-center">
+                <small style="color: #c4b8ab;">关联度得分：{{ disease.match_score }}</small>
+                <a href="{{ url_for('disease_detail', disease_id=disease.id) }}"
+                   class="btn btn-sm" style="background: #7a9e8f; color: #fff; border-radius: 8px;">
+                    查看详情 →
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <div class="empty-icon">🔍</div>
+    <h5>未找到匹配的疾病</h5>
+    <p style="color: #c4b8ab;">请尝试：使用不同关键词 · 减少搜索词数量 · 切换"全部"级别</p>
+    <a href="{{ url_for('browse') }}" class="btn btn-sm" style="background: #7a9e8f; color: #fff; border-radius: 8px;">
+        🧬 浏览全部疾病
+    </a>
+</div>
+{% endif %}
+{% else %}
+<!-- 未输入搜索词 -->
+<div class="empty-state">
+    <div class="empty-icon" style="font-size: 3.5rem;">🔍</div>
+    <h5 style="color: #7a6e65;">请输入症状关键词开始搜索</h5>
+    <p style="color: #c4b8ab;">支持的症状如：胸痛、发热、咳嗽、呼吸困难、头痛、腹痛、水肿、心悸等</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+{% endblock %}

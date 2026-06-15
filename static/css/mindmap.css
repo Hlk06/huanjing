@@ -1,0 +1,245 @@
+/* ============================================
+   mindmap.css v3 — 温馨静谧主题
+   暖色调思维导图容器与面板样式
+   ============================================ */
+
+/* 全屏思维导图布局 */
+.mindmap-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 120px);
+    min-height: 500px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(139, 119, 90, 0.08);
+}
+
+/* 工具栏 — 暖色背景 */
+.mindmap-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: #faf7f2;
+    border: 1px solid #e8dfd5;
+    border-radius: 12px 12px 0 0;
+    flex-wrap: wrap;
+}
+
+.mindmap-toolbar .btn-group {
+    box-shadow: none;
+}
+
+.mindmap-toolbar .form-select {
+    max-width: 200px;
+    border-radius: 8px;
+    border-color: #e8dfd5;
+    font-size: 0.85rem;
+}
+
+/* 导图主体 */
+.mindmap-main {
+    display: flex;
+    flex: 1;
+    border: 1px solid #e8dfd5;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    overflow: hidden;
+}
+
+/* 画布容器 */
+.mindmap-canvas {
+    flex: 1;
+    background: #fdfbf8;
+    background-image:
+        radial-gradient(circle at 30% 40%, rgba(122, 158, 143, 0.04) 0%, transparent 50%),
+        radial-gradient(circle at 70% 60%, rgba(184, 169, 201, 0.04) 0%, transparent 50%);
+    position: relative;
+    overflow: hidden;
+    cursor: grab;
+}
+
+.mindmap-canvas:active {
+    cursor: grabbing;
+}
+
+.mindmap-canvas svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* 右侧信息面板 — 暖色 */
+.mindmap-panel {
+    width: 320px;
+    background: #fffefc;
+    border-left: 1px solid #e8dfd5;
+    padding: 20px;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+}
+
+@media (max-width: 992px) {
+    .mindmap-panel {
+        width: 280px;
+    }
+}
+
+@media (max-width: 768px) {
+    .mindmap-main {
+        flex-direction: column;
+    }
+
+    .mindmap-canvas {
+        min-height: 380px;
+        flex: none;
+    }
+
+    .mindmap-panel {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid #e8dfd5;
+        max-height: 280px;
+        flex: none;
+    }
+
+    .mindmap-toolbar {
+        gap: 6px;
+        padding: 10px 12px;
+    }
+
+    .mindmap-toolbar .form-select {
+        max-width: 140px;
+        font-size: 0.78rem;
+    }
+
+    .mindmap-container {
+        height: auto;
+        min-height: 0;
+    }
+}
+
+/* 面板空状态 */
+.panel-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #c4b8ab;
+}
+
+.panel-empty .panel-icon {
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+    opacity: 0.5;
+}
+
+.panel-disease-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #3d3029;
+    margin-bottom: 8px;
+}
+
+.panel-system-badge {
+    display: inline-block;
+    background: #e8f0ec;
+    color: #5a8070;
+    padding: 3px 12px;
+    border-radius: 12px;
+    font-size: 0.78rem;
+    margin-bottom: 12px;
+}
+
+.panel-symptoms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin: 10px 0;
+}
+
+.panel-symptoms .badge {
+    font-size: 0.7rem;
+    border-radius: 8px;
+}
+
+.panel-info-section {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #f0ebe0;
+}
+
+.panel-info-section h6 {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #5a8070;
+    margin-bottom: 6px;
+}
+
+.panel-info-section p {
+    font-size: 0.78rem;
+    color: #7a6e65;
+    line-height: 1.5;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+/* 导图节点自定义 — 暖色调 */
+.node-disease {
+    fill: #e8f0ec;
+    stroke: #7a9e8f;
+}
+
+.node-disease text {
+    fill: #5a8070;
+    font-weight: 600;
+}
+
+.node-symptom {
+    fill: #fef0ea;
+    stroke: #c06a4a;
+}
+
+.node-diff {
+    fill: #fdf3ea;
+    stroke: #c8956c;
+}
+
+/* 导出按钮 */
+.mindmap-export-btn {
+    margin-left: auto;
+}
+
+/* 加载动画 */
+.mindmap-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #a89888;
+}
+
+.mindmap-loading .spinner-border {
+    color: #7a9e8f;
+}
+
+/* 工具栏按钮暖色覆盖 */
+.mindmap-toolbar .btn-outline-secondary {
+    color: #7a6e65;
+    border-color: #ddd2c4;
+}
+
+.mindmap-toolbar .btn-outline-secondary:hover {
+    background: #f5f0e8;
+    color: #3d3029;
+    border-color: #c4b8ab;
+}
+
+.mindmap-toolbar .btn-outline-primary {
+    color: #5a8070;
+    border-color: #a3c4b5;
+}
+
+.mindmap-toolbar .btn-outline-primary:hover {
+    background: #7a9e8f;
+    border-color: #7a9e8f;
+    color: #fff;
+}
