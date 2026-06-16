@@ -15,7 +15,6 @@ pages_data/
 
 # IDE
 .vscode/
-build/
 
 # Temp scripts
 batch_extract.py

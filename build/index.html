@@ -1,0 +1,404 @@
+<!-- index.html — 温馨静谧首页 (Stitch v3) -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<!--
+  base.html — 温馨静谧主题 (Stitch)
+  设计理念: 午后阳光洒在医学书页上 — 温暖、静谧、放松
+  支持: 桌面端 + 平板 + 手机端响应式
+-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>临床医学知识库 · 温馨学习空间</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- 温馨主题样式 -->
+    <link href="/static/css/style.css" rel="stylesheet">
+    
+</head>
+<body>
+    <!-- ============================================
+    顶部导航栏 — 温暖鼠尾草绿渐变
+    ============================================ -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm" style="background: linear-gradient(135deg, #8bae9b 0%, #6d9482 40%, #5a8070 100%) !important;">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                🌿 临床医学知识库
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="导航菜单">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">
+                            🏠 首页
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/browse">
+                            📋 系统浏览
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/textbooks">
+                            📚 教材
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/literacy">
+                            🩺 素养
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/mindmap">
+                            🧠 思维图
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/notepad">
+                            📝 记事本
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/quiz">
+                            ✍️ 刷题
+                        </a>
+                    </li>
+                    <li class="nav-item d-none d-lg-block">
+                        <a class="nav-link " href="/admin">
+                            ⚙️
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================
+    主内容区域
+    ============================================ -->
+    <main class="container mt-4 mb-5">
+        
+            
+        
+
+        
+<!-- 欢迎区 — 柔和渐变卡片 -->
+<div class="card border-0 shadow-sm mb-3" style="background: linear-gradient(135deg, #fefdfb 0%, #faf7f2 50%, #fdf8f4 100%); border-radius: 20px;">
+    <div class="card-body text-center py-3 px-3">
+        <div style="font-size: 2rem; margin-bottom: 4px;">🌿</div>
+        <h5 class="fw-bold mb-1" style="color: #5a8070;">临床医学知识库</h5>
+        <p class="small mb-0" style="color: #a89888;">在静谧中学习，在温暖中成长</p>
+    </div>
+</div>
+
+<!-- 搜索栏 — 温暖圆润 -->
+<div class="search-hero mb-3">
+    <form action="/search" method="GET">
+        <div class="input-group shadow-sm" style="border-radius: 16px; overflow: hidden; border: 2px solid #e8dfd5;">
+            <span class="input-group-text bg-white border-0 ps-3">
+                <span style="font-size: 1.1rem;">🔍</span>
+            </span>
+            <input type="text" name="q" class="form-control border-0 ps-2" id="heroSearch"
+                   placeholder="输入症状或疾病名称…" autocomplete="off"
+                   style="font-size: 0.92rem; background: #fffefc;">
+            <button class="btn px-4" type="submit"
+                    style="background: #7a9e8f; color: #fff; border-radius: 0;">
+                搜索
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- 统计卡片行 — 4列温暖数字 -->
+<div class="row g-2 mb-3">
+    <div class="col-6 col-md-3">
+        <a href="/browse" class="stat-card-warm">
+            <div class="stat-value" id="statDiseases">91</div>
+            <div class="stat-label">🏥 疾病条目</div>
+        </a>
+    </div>
+    <div class="col-6 col-md-3">
+        <a href="/browse" class="stat-card-warm accent">
+            <div class="stat-value" id="statInfos">330</div>
+            <div class="stat-label">📝 知识点</div>
+        </a>
+    </div>
+    <div class="col-6 col-md-3">
+        <a href="/textbooks" class="stat-card-warm lavender">
+            <div class="stat-value">24</div>
+            <div class="stat-label">📚 教材</div>
+        </a>
+    </div>
+    <div class="col-6 col-md-3">
+        <a href="/literacy" class="stat-card-warm peach">
+            <div class="stat-value">🩺</div>
+            <div class="stat-label">医学素养</div>
+        </a>
+    </div>
+</div>
+
+<!-- 系统网格标题 -->
+<div class="d-flex align-items-center mb-2">
+    <span style="font-size: 0.95rem; color: #5a8070; margin-right: 6px;">🧬</span>
+    <span class="fw-bold" style="font-size: 0.85rem; color: #5a8070;">九大系统</span>
+    <span class="ms-auto" style="font-size: 0.7rem; color: #c4b8ab;">点击浏览 →</span>
+</div>
+
+<!-- 系统网格 — 3列(手机) / 9列(桌面) -->
+<div class="system-grid-mobile row g-2 mb-3" id="systemGrid">
+    
+    <div class="col-4 col-md-2_4" style="flex: 0 0 auto; width: 11.11%;">
+        <a href="/browse/1" class="system-card-warm">
+            <span class="sys-icon">❤️</span>
+            <span class="sys-name">循环系统</span>
+        </a>
+    </div>
+    
+    <div class="col-4 col-md-2_4" style="flex: 0 0 auto; width: 11.11%;">
+        <a href="/browse/2" class="system-card-warm">
+            <span class="sys-icon">🫁</span>
+            <span class="sys-name">呼吸系统</span>
+        </a>
+    </div>
+    
+    <div class="col-4 col-md-2_4" style="flex: 0 0 auto; width: 11.11%;">
+        <a href="/browse/3" class="system-card-warm">
+            <span class="sys-icon">🔬</span>
+            <span class="sys-name">消化系统</span>
+        </a>
+    </div>
+    
+    <div class="col-4 col-md-2_4" style="flex: 0 0 auto; width: 11.11%;">
+        <a href="/browse/4" class="system-card-warm">
+            <span class="sys-icon">💧</span>
+            <span class="sys-name">泌尿系统</span>
+        </a>
+    </div>
+    
+    <div class="col-4 col-md-2_4" style="flex: 0 0 auto; width: 11.11%;">
+        <a href="/browse/5" class="system-card-warm">
+            <span class="sys-icon">⚡</span>
+            <span class="sys-name">内分泌系统</span>
+        </a>
+    </div>
+    
+    <div class="col-4 col-md-2_4" style="flex: 0 0 auto; width: 11.11%;">
+        <a href="/browse/6" class="system-card-warm">
+            <span class="sys-icon">🧠</span>
+            <span class="sys-name">神经系统</span>
+        </a>
+    </div>
+    
+    <div class="col-4 col-md-2_4" style="flex: 0 0 auto; width: 11.11%;">
+        <a href="/browse/7" class="system-card-warm">
+            <span class="sys-icon">🛡️</span>
+            <span class="sys-name">免疫系统</span>
+        </a>
+    </div>
+    
+    <div class="col-4 col-md-2_4" style="flex: 0 0 auto; width: 11.11%;">
+        <a href="/browse/8" class="system-card-warm">
+            <span class="sys-icon">🧬</span>
+            <span class="sys-name">生殖系统</span>
+        </a>
+    </div>
+    
+    <div class="col-4 col-md-2_4" style="flex: 0 0 auto; width: 11.11%;">
+        <a href="/browse/9" class="system-card-warm">
+            <span class="sys-icon">🦴</span>
+            <span class="sys-name">运动系统</span>
+        </a>
+    </div>
+    
+</div>
+
+<!-- 双板块入口 — 本科 / 研究生 -->
+<div class="level-buttons-row row g-2 mb-3">
+    <div class="col-6">
+        <a href="/browse?level=undergraduate" class="level-btn undergraduate">
+            <span class="level-icon">🎓</span>
+            <span class="level-title">本科</span>
+            <span class="level-subtitle">核心教材知识</span>
+        </a>
+    </div>
+    <div class="col-6">
+        <a href="/browse?level=graduate" class="level-btn graduate">
+            <span class="level-icon">🔬</span>
+            <span class="level-title">研究生</span>
+            <span class="level-subtitle">专科深化拓展</span>
+        </a>
+    </div>
+</div>
+
+<!-- 快速入口 — 常用功能卡片 -->
+<div class="row g-2 mb-3">
+    <div class="col-4">
+        <a href="/search" class="card text-decoration-none border-0 shadow-sm h-100"
+           style="background: #fefdfb; border-radius: 14px;">
+            <div class="card-body text-center p-2">
+                <div style="font-size: 1.3rem;">🔍</div>
+                <small class="fw-bold d-block" style="color: #3d3029; font-size: 0.72rem;">症状搜索</small>
+            </div>
+        </a>
+    </div>
+    <div class="col-4">
+        <a href="/mindmap" class="card text-decoration-none border-0 shadow-sm h-100"
+           style="background: #fefdfb; border-radius: 14px;">
+            <div class="card-body text-center p-2">
+                <div style="font-size: 1.3rem;">🧠</div>
+                <small class="fw-bold d-block" style="color: #3d3029; font-size: 0.72rem;">思维导图</small>
+            </div>
+        </a>
+    </div>
+    <div class="col-4">
+        <a href="/quiz" class="card text-decoration-none border-0 shadow-sm h-100"
+           style="background: #fefdfb; border-radius: 14px;">
+            <div class="card-body text-center p-2">
+                <div style="font-size: 1.3rem;">✍️</div>
+                <small class="fw-bold d-block" style="color: #3d3029; font-size: 0.72rem;">刷题模式</small>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- 页脚点缀 — 静谧语录 -->
+<div class="text-center mt-4" style="padding: 12px 0; color: #c4b8ab; font-size: 0.75rem;">
+    <span>🍃 学医之道，贵在坚持 · 日积月累，水滴石穿</span>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    // 动态更新统计数据
+    fetch('/api/stats').then(r=>r.json()).then(d=>{
+        document.getElementById('statDiseases').textContent = d.disease_count;
+        document.getElementById('statInfos').textContent = d.disease_info_count;
+    });
+
+    // 搜索自动补全
+    const input = document.getElementById('heroSearch');
+    let timer;
+    input.addEventListener('input', function(){
+        clearTimeout(timer);
+        const q = this.value.trim();
+        if(q.length < 1) return;
+        timer = setTimeout(()=>{
+            fetch('/api/symptoms/search?q=' + encodeURIComponent(q))
+                .then(r=>r.json()).then(s=>{
+                    let dl = document.getElementById('symptomList');
+                    if(!dl){
+                        dl = document.createElement('datalist');
+                        dl.id = 'symptomList';
+                        document.body.appendChild(dl);
+                    }
+                    dl.innerHTML = s.map(x => '<option value="' + x.name + '">').join('');
+                    input.setAttribute('list', 'symptomList');
+                });
+        }, 150);
+    });
+
+    // 平滑滚动入场动画
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.stat-card-warm, .system-card-warm, .level-btn').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(12px)';
+        el.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+        observer.observe(el);
+    });
+
+    // 触发初始可见元素
+    setTimeout(() => {
+        document.querySelectorAll('.stat-card-warm, .system-card-warm, .level-btn').forEach(el => {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        });
+    }, 100);
+});
+</script>
+
+<style>
+/* 移动端系统网格覆盖 */
+@media (max-width: 767px) {
+    #systemGrid .col-4 {
+        flex: 0 0 auto !important;
+        width: 33.33% !important;
+    }
+    .system-card-warm {
+        padding: 12px 4px;
+    }
+    .system-card-warm .sys-icon {
+        font-size: 1.4rem;
+    }
+    .system-card-warm .sys-name {
+        font-size: 0.65rem;
+    }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+    #systemGrid .col-4 {
+        flex: 0 0 auto !important;
+        width: 20% !important;
+    }
+    #systemGrid .col-4:nth-child(n+6) {
+        display: none;
+    }
+}
+</style>
+
+    </main>
+
+    <!-- ============================================
+    页脚 — 安静的存在感
+    ============================================ -->
+    <footer>
+        <div class="container text-center">
+            <p class="mb-0">
+                🌙 临床医学学习与复习系统 v1.0 · 内容仅供学习参考，具体诊疗请以临床指南为准
+            </p>
+        </div>
+    </footer>
+
+    <!-- ============================================
+    移动端底部导航栏 — 拇指友好的快捷入口
+    ============================================ -->
+    <nav class="mobile-bottom-nav">
+        <a href="/" class="active">
+            <span class="nav-icon">🏠</span>
+            <span>首页</span>
+        </a>
+        <a href="/browse" class="">
+            <span class="nav-icon">📋</span>
+            <span>浏览</span>
+        </a>
+        <a href="/search" class="">
+            <span class="nav-icon">🔍</span>
+            <span>搜索</span>
+        </a>
+        <a href="/mindmap" class="">
+            <span class="nav-icon">🧠</span>
+            <span>思维图</span>
+        </a>
+        <a href="/notepad" class="">
+            <span class="nav-icon">📝</span>
+            <span>记事本</span>
+        </a>
+    </nav>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 公共工具函数 -->
+    <script src="/static/js/common.js"></script>
+    
+</body>
+</html>

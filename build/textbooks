@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<!--
+  base.html — 温馨静谧主题 (Stitch)
+  设计理念: 午后阳光洒在医学书页上 — 温暖、静谧、放松
+  支持: 桌面端 + 平板 + 手机端响应式
+-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>教材图书馆</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- 温馨主题样式 -->
+    <link href="/static/css/style.css" rel="stylesheet">
+    
+</head>
+<body>
+    <!-- ============================================
+    顶部导航栏 — 温暖鼠尾草绿渐变
+    ============================================ -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm" style="background: linear-gradient(135deg, #8bae9b 0%, #6d9482 40%, #5a8070 100%) !important;">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                🌿 临床医学知识库
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="导航菜单">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link " href="/">
+                            🏠 首页
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/browse">
+                            📋 系统浏览
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/textbooks">
+                            📚 教材
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/literacy">
+                            🩺 素养
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/mindmap">
+                            🧠 思维图
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/notepad">
+                            📝 记事本
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/quiz">
+                            ✍️ 刷题
+                        </a>
+                    </li>
+                    <li class="nav-item d-none d-lg-block">
+                        <a class="nav-link " href="/admin">
+                            ⚙️
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================
+    主内容区域
+    ============================================ -->
+    <main class="container mt-4 mb-5">
+        
+            
+        
+
+        
+<div class="mb-3"><nav aria-label="breadcrumb"><ol class="breadcrumb small"><li class="breadcrumb-item"><a href="/">首页</a></li><li class="breadcrumb-item active">教材图书馆</li></ol></nav><h4 class="fw-bold mb-0">📚 教材图书馆</h4><small class="text-muted">第10版医学教材全集 · 24本 · 已收录数据库中 · 点击卡片查看内容</small></div>
+
+<div class="mb-4"><h6 class="mb-2 fw-bold">⚖️ 公共卫生与人文 <small class="text-muted fw-normal">(3本)</small></h6>
+<div class="row g-3">
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #2ecc71;border-radius:12px;cursor:pointer" onclick="viewBook('临床药理学','第7版','李俊',0,'💉','#2ecc71',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#2ecc71dd,#2ecc7188);border-radius:5px;box-shadow:0 3px 10px #2ecc7144"><span style="font-size:1.8rem">💉</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">临床药理学</h6><small class="text-muted">第7版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div>
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #2ecc71;border-radius:12px;cursor:pointer" onclick="viewBook('卫生法','第6版','黎东生',0,'⚖️','#2ecc71',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#2ecc71dd,#2ecc7188);border-radius:5px;box-shadow:0 3px 10px #2ecc7144"><span style="font-size:1.8rem">⚖️</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">卫生法</h6><small class="text-muted">第6版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div>
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #2ecc71;border-radius:12px;cursor:pointer" onclick="viewBook('预防医学','第8版','傅华',0,'🛡️','#2ecc71',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#2ecc71dd,#2ecc7188);border-radius:5px;box-shadow:0 3px 10px #2ecc7144"><span style="font-size:1.8rem">🛡️</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">预防医学</h6><small class="text-muted">第8版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div></div></div>
+
+<div class="mb-4"><h6 class="mb-2 fw-bold">🔬 基础医学 <small class="text-muted fw-normal">(12本)</small></h6>
+<div class="row g-3">
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #3498db;border-radius:12px;cursor:pointer" onclick="viewBook('人体寄生虫学','第10版','诸欣平、苏川',0,'🐛','#3498db',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#3498dbdd,#3498db88);border-radius:5px;box-shadow:0 3px 10px #3498db44"><span style="font-size:1.8rem">🐛</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">人体寄生虫学</h6><small class="text-muted">第10版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div>
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #3498db;border-radius:12px;cursor:pointer" onclick="viewBook('医学免疫学','第8版','曹雪涛',0,'🛡️','#3498db',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#3498dbdd,#3498db88);border-radius:5px;box-shadow:0 3px 10px #3498db44"><span style="font-size:1.8rem">🛡️</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">医学免疫学</h6><small class="text-muted">第8版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div>
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #3498db;border-radius:12px;cursor:pointer" onclick="viewBook('医学微生物学','第10版','李凡、徐志凯',0,'🦠','#3498db',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#3498dbdd,#3498db88);border-radius:5px;box-shadow:0 3px 10px #3498db44"><span style="font-size:1.8rem">🦠</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">医学微生物学</h6><small class="text-muted">第10版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div>
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #3498db;border-radius:12px;cursor:pointer" onclick="viewBook('医学细胞生物学','第7版','陈誉华、陈志南',0,'🧫','#3498db',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#3498dbdd,#3498db88);border-radius:5px;box-shadow:0 3px 10px #3498db44"><span style="font-size:1.8rem">🧫</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">医学细胞生物学</h6><small class="text-muted">第7版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div>
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #3498db;border-radius:12px;cursor:pointer" onclick="viewBook('局部解剖学','第10版','张绍祥、张雅芳',0,'🔍','#3498db',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#3498dbdd,#3498db88);border-radius:5px;box-shadow:0 3px 10px #3498db44"><span style="font-size:1.8rem">🔍</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">局部解剖学</h6><small class="text-muted">第10版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div>
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #3498db;border-radius:12px;cursor:pointer" onclick="viewBook('生物化学与分子生物学','第10版','查锡良、药立波',0,'📖','#3498db',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#3498dbdd,#3498db88);border-radius:5px;box-shadow:0 3px 10px #3498db44"><span style="font-size:1.8rem">📖</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">生物化学与分子生物学</h6><small class="text-muted">第10版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div>
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #3498db;border-radius:12px;cursor:pointer" onclick="viewBook('生理学','第10版','王庭槐',0,'⚡','#3498db',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#3498dbdd,#3498db88);border-radius:5px;box-shadow:0 3px 10px #3498db44"><span style="font-size:1.8rem">⚡</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">生理学</h6><small class="text-muted">第10版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div>
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #3498db;border-radius:12px;cursor:pointer" onclick="viewBook('病理学','第10版','步宏、李一雷',0,'🩸','#3498db',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#3498dbdd,#3498db88);border-radius:5px;box-shadow:0 3px 10px #3498db44"><span style="font-size:1.8rem">🩸</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">病理学</h6><small class="text-muted">第10版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div>
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #3498db;border-radius:12px;cursor:pointer" onclick="viewBook('病理生理学','第10版','王建枝、钱睿哲',0,'🧬','#3498db',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#3498dbdd,#3498db88);border-radius:5px;box-shadow:0 3px 10px #3498db44"><span style="font-size:1.8rem">🧬</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">病理生理学</h6><small class="text-muted">第10版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div>
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #3498db;border-radius:12px;cursor:pointer" onclick="viewBook('系统解剖学','第10版','丁文龙、刘学政',0,'🦴','#3498db',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#3498dbdd,#3498db88);border-radius:5px;box-shadow:0 3px 10px #3498db44"><span style="font-size:1.8rem">🦴</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">系统解剖学</h6><small class="text-muted">第10版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div>
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #3498db;border-radius:12px;cursor:pointer" onclick="viewBook('组织学与胚胎学','第10版','李和、李继承',0,'🔬','#3498db',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#3498dbdd,#3498db88);border-radius:5px;box-shadow:0 3px 10px #3498db44"><span style="font-size:1.8rem">🔬</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">组织学与胚胎学</h6><small class="text-muted">第10版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div>
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #3498db;border-radius:12px;cursor:pointer" onclick="viewBook('药理学','第10版','杨宝峰、陈建国',0,'💊','#3498db',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#3498dbdd,#3498db88);border-radius:5px;box-shadow:0 3px 10px #3498db44"><span style="font-size:1.8rem">💊</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">药理学</h6><small class="text-muted">第10版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div></div></div>
+
+<div class="mb-4"><h6 class="mb-2 fw-bold">🏥 临床医学 <small class="text-muted fw-normal">(9本)</small></h6>
+<div class="row g-3">
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #e74c3c;border-radius:12px;cursor:pointer" onclick="viewBook('传染病学','第10版','李兰娟、任红',0,'🦠','#e74c3c',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#e74c3cdd,#e74c3c88);border-radius:5px;box-shadow:0 3px 10px #e74c3c44"><span style="font-size:1.8rem">🦠</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">传染病学</h6><small class="text-muted">第10版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div>
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #e74c3c;border-radius:12px;cursor:pointer" onclick="viewBook('儿科学','第10版','王卫平',0,'👶','#e74c3c',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#e74c3cdd,#e74c3c88);border-radius:5px;box-shadow:0 3px 10px #e74c3c44"><span style="font-size:1.8rem">👶</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">儿科学</h6><small class="text-muted">第10版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div>
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #e74c3c;border-radius:12px;cursor:pointer" onclick="viewBook('内科学','第10版','葛均波、王辰、王建安',0,'🫀','#e74c3c',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#e74c3cdd,#e74c3c88);border-radius:5px;box-shadow:0 3px 10px #e74c3c44"><span style="font-size:1.8rem">🫀</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">内科学</h6><small class="text-muted">第10版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div>
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #e74c3c;border-radius:12px;cursor:pointer" onclick="viewBook('医学影像学','第9版','徐克、龚启勇',0,'📷','#e74c3c',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#e74c3cdd,#e74c3c88);border-radius:5px;box-shadow:0 3px 10px #e74c3c44"><span style="font-size:1.8rem">📷</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">医学影像学</h6><small class="text-muted">第9版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div>
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #e74c3c;border-radius:12px;cursor:pointer" onclick="viewBook('外科学','第10版','陈孝平、汪建平、赵继宗',0,'🔪','#e74c3c',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#e74c3cdd,#e74c3c88);border-radius:5px;box-shadow:0 3px 10px #e74c3c44"><span style="font-size:1.8rem">🔪</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">外科学</h6><small class="text-muted">第10版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div>
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #e74c3c;border-radius:12px;cursor:pointer" onclick="viewBook('妇产科学','第10版','谢幸、孔北华',0,'🤰','#e74c3c',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#e74c3cdd,#e74c3c88);border-radius:5px;box-shadow:0 3px 10px #e74c3c44"><span style="font-size:1.8rem">🤰</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">妇产科学</h6><small class="text-muted">第10版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div>
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #e74c3c;border-radius:12px;cursor:pointer" onclick="viewBook('神经病学','第9版','贾建平',0,'🧠','#e74c3c',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#e74c3cdd,#e74c3c88);border-radius:5px;box-shadow:0 3px 10px #e74c3c44"><span style="font-size:1.8rem">🧠</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">神经病学</h6><small class="text-muted">第9版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div>
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #e74c3c;border-radius:12px;cursor:pointer" onclick="viewBook('精神病学','第9版','李凌江、陆林',0,'🧩','#e74c3c',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#e74c3cdd,#e74c3c88);border-radius:5px;box-shadow:0 3px 10px #e74c3c44"><span style="font-size:1.8rem">🧩</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">精神病学</h6><small class="text-muted">第9版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div>
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid #e74c3c;border-radius:12px;cursor:pointer" onclick="viewBook('诊断学','第10版','万学红、卢雪峰',0,'🩺','#e74c3c',true)"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,#e74c3cdd,#e74c3c88);border-radius:5px;box-shadow:0 3px 10px #e74c3c44"><span style="font-size:1.8rem">🩺</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">诊断学</h6><small class="text-muted">第10版 · 0页</small><div class="mt-1"><span class="badge bg-success" style="font-size:.55rem">✅可查看</span></div></div></div></div></div></div>
+
+<div class="text-center mt-3"><small class="text-muted">📁 PDF: D:\第10版资料\ | 📁 Word: D:\第10版资料\word\ | 🟢 绿色标记 = 已提取页面可查看</small></div>
+
+<div class="modal fade" id="bookModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header" style="background:linear-gradient(135deg,#667eea,#764ba2);color:white"><h5 class="modal-title" id="bookTitle"></h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body" id="bookContent"><div class="text-center py-5"><div class="spinner-border"></div><p class="text-muted mt-2">加载教材内容...</p></div></div></div></div></div>
+<style>.book-card:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(0,0,0,.12)!important}</style>
+<script>
+async function viewBook(name,edition,author,pages,icon,color,hasPages){
+    document.getElementById('bookTitle').innerHTML=`${icon} ${name} <small class="text-white-50">${edition} · ${pages}页</small>`;
+    document.getElementById('bookContent').innerHTML=`<div class="text-center py-5"><div class="spinner-border"></div><p class="text-muted mt-2">加载中...</p></div>`;
+    new bootstrap.Modal(document.getElementById('bookModal')).show();
+
+    let html=`<div class="p-3 mb-3 rounded" style="background:linear-gradient(135deg,${color}22,${color}11);border-left:4px solid ${color}"><h5>${icon} ${name} (${edition})</h5><p class="mb-1">作者: ${author||'人民卫生出版社'}</p><p class="mb-0 small">📄 共 ${pages} 页 · 人民卫生出版社</p></div>`;
+
+    if(!hasPages){
+        html+=`<div class="alert alert-info small">📭 该教材的页面提取数据暂不可用。<br>请通过 <strong>管理后台→📤上传教材</strong> 上传PDF/Word文件，系统将自动提取文本并生成页面预览。</div>`;
+        document.getElementById('bookContent').innerHTML=html;return;
+    }
+
+    try{
+        let resp=await fetch(`/api/textbook/pages?name=${encodeURIComponent(name)}`);
+        if(!resp.ok){html+=`<div class="alert alert-warning small">⚠️ 加载失败: HTTP ${resp.status}</div>`;document.getElementById('bookContent').innerHTML=html;return;}
+        let data=await resp.json();
+        if(data.error){html+=`<div class="alert alert-warning small">⚠️ ${data.error}</div>`;document.getElementById('bookContent').innerHTML=html;return;}
+        html+=`<div class="alert alert-success small">📖 已提取 ${data.total} 页 · 显示前${data.preview.length}页</div><div class="accordion" id="pageAcc">`;
+        data.preview.forEach((p,i)=>{
+            let txt=(p.t||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            // compress long text
+            let short=txt.length>300?txt.substring(0,300)+'...':txt;
+            html+=`<div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed small py-1" data-bs-toggle="collapse" data-bs-target="#pp${i}" style="font-size:.75rem">📄 第${p.n}页 <span class="ms-2 text-muted">${short.substring(0,60).replace(/&lt;/g,'<').replace(/&gt;/g,'>')}...</span></button></h2><div id="pp${i}" class="accordion-collapse collapse" data-bs-parent="#pageAcc"><div class="accordion-body small" style="white-space:pre-wrap;max-height:300px;overflow-y:auto;font-size:.75rem;line-height:1.6">${txt}</div></div></div>`;
+        });
+        html+=`</div>`;
+        if(data.has_more) html+=`<p class="text-muted small mt-2">仅显示前50页预览，共${data.total}页</p>`;
+    }catch(e){
+        html+=`<div class="alert alert-danger small">❌ 加载出错: ${e.message}</div>`;
+    }
+    document.getElementById('bookContent').innerHTML=html;
+}
+</script>
+
+    </main>
+
+    <!-- ============================================
+    页脚 — 安静的存在感
+    ============================================ -->
+    <footer>
+        <div class="container text-center">
+            <p class="mb-0">
+                🌙 临床医学学习与复习系统 v1.0 · 内容仅供学习参考，具体诊疗请以临床指南为准
+            </p>
+        </div>
+    </footer>
+
+    <!-- ============================================
+    移动端底部导航栏 — 拇指友好的快捷入口
+    ============================================ -->
+    <nav class="mobile-bottom-nav">
+        <a href="/" class="">
+            <span class="nav-icon">🏠</span>
+            <span>首页</span>
+        </a>
+        <a href="/browse" class="">
+            <span class="nav-icon">📋</span>
+            <span>浏览</span>
+        </a>
+        <a href="/search" class="">
+            <span class="nav-icon">🔍</span>
+            <span>搜索</span>
+        </a>
+        <a href="/mindmap" class="">
+            <span class="nav-icon">🧠</span>
+            <span>思维图</span>
+        </a>
+        <a href="/notepad" class="">
+            <span class="nav-icon">📝</span>
+            <span>记事本</span>
+        </a>
+    </nav>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 公共工具函数 -->
+    <script src="/static/js/common.js"></script>
+    
+</body>
+</html>

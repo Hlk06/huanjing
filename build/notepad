@@ -1,0 +1,177 @@
+<!-- notepad.html — 语音+手动记事本 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<!--
+  base.html — 温馨静谧主题 (Stitch)
+  设计理念: 午后阳光洒在医学书页上 — 温暖、静谧、放松
+  支持: 桌面端 + 平板 + 手机端响应式
+-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>记事本</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- 温馨主题样式 -->
+    <link href="/static/css/style.css" rel="stylesheet">
+    
+</head>
+<body>
+    <!-- ============================================
+    顶部导航栏 — 温暖鼠尾草绿渐变
+    ============================================ -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm" style="background: linear-gradient(135deg, #8bae9b 0%, #6d9482 40%, #5a8070 100%) !important;">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                🌿 临床医学知识库
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="导航菜单">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link " href="/">
+                            🏠 首页
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/browse">
+                            📋 系统浏览
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/textbooks">
+                            📚 教材
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/literacy">
+                            🩺 素养
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/mindmap">
+                            🧠 思维图
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/notepad">
+                            📝 记事本
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/quiz">
+                            ✍️ 刷题
+                        </a>
+                    </li>
+                    <li class="nav-item d-none d-lg-block">
+                        <a class="nav-link " href="/admin">
+                            ⚙️
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================
+    主内容区域
+    ============================================ -->
+    <main class="container mt-4 mb-5">
+        
+            
+        
+
+        
+<div class="mb-2"><h5 class="fw-bold mb-0">📝 智能记事本</h5><small class="text-muted">语音输入 · 代办清单 · 知识点记录 · 错题归纳</small></div>
+<div class="row g-2 mb-3">
+ <div class="col-6 col-md-3"><button class="btn w-100 btn-outline-primary btn-sm" onclick="switchTab('todo')" id="tabBtnTodo">✅ 代办</button></div>
+ <div class="col-6 col-md-3"><button class="btn w-100 btn-outline-info btn-sm" onclick="switchTab('note')" id="tabBtnNote">📒 笔记</button></div>
+ <div class="col-6 col-md-3"><button class="btn w-100 btn-outline-warning btn-sm" onclick="switchTab('error')" id="tabBtnError">❌ 错题</button></div>
+ <div class="col-6 col-md-3"><button class="btn w-100 btn-outline-success btn-sm" id="voiceBtn" onclick="toggleVoice()">🎤 录音</button></div>
+</div>
+<div id="voiceBar" style="display:none;" class="alert alert-info mb-2 py-1 small text-center">🔴 正在聆听... <span id="voiceText"></span> <button class="btn btn-sm btn-outline-secondary ms-2" onclick="stopVoice()">停止</button></div>
+<div id="tabTodo"><div class="input-group input-group-sm mb-2"><input class="form-control" id="todoInput" placeholder="添加代办..." onkeydown="if(event.key==='Enter')addTodo()"><button class="btn btn-primary" onclick="addTodo()">+</button></div><div id="todoList"></div></div>
+<div id="tabNote" style="display:none;"><div class="mb-2"><textarea class="form-control form-control-sm" id="noteInput" rows="8" placeholder="记录知识点... 支持Markdown"></textarea></div><div class="d-flex gap-1 mb-2"><button class="btn btn-sm btn-primary" onclick="saveNote()">💾 保存笔记</button><button class="btn btn-sm btn-outline-secondary" onclick="clearNote()">清空</button></div><div id="noteList"></div></div>
+<div id="tabError" style="display:none;"><div class="input-group input-group-sm mb-2"><input class="form-control" id="errorQ" placeholder="题目..."><input class="form-control" id="errorA" placeholder="正确答案..."><button class="btn btn-warning" onclick="addError()">+ 错题</button></div><div id="errorList"></div></div>
+<script>
+// Storage keys
+const STORAGE={todo:'np_todos',note:'np_notes',error:'np_errors'};
+function load(k){try{return JSON.parse(localStorage.getItem(k)||'[]')}catch(e){return[]}}
+function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
+// Tab switch
+let currentTab='todo';
+function switchTab(t){currentTab=t;['todo','note','error'].forEach(x=>{document.getElementById('tab'+x.charAt(0).toUpperCase()+x.slice(1)).style.display=x===t?'block':'none';document.getElementById('tabBtn'+x.charAt(0).toUpperCase()+x.slice(1)).classList.toggle('active',x===t)});if(t==='todo')renderTodos();if(t==='note')renderNotes();if(t==='error')renderErrors();}
+// Todos
+function addTodo(){const v=document.getElementById('todoInput').value.trim();if(!v)return;const todos=load(STORAGE.todo);todos.push({id:Date.now(),text:v,done:false,time:new Date().toLocaleString()});save(STORAGE.todo,todos);document.getElementById('todoInput').value='';renderTodos();}
+function toggleTodo(id){const todos=load(STORAGE.todo);const t=todos.find(x=>x.id===id);if(t)t.done=!t.done;save(STORAGE.todo,todos);renderTodos();}
+function delTodo(id){const todos=load(STORAGE.todo).filter(x=>x.id!==id);save(STORAGE.todo,todos);renderTodos();}
+function renderTodos(){const todos=load(STORAGE.todo);document.getElementById('todoList').innerHTML=todos.length===0?'<p class="text-muted small">暂无代办</p>':todos.map(t=>`<div class="d-flex align-items-center border-bottom py-1 small"><input type="checkbox" ${t.done?'checked':''} onchange="toggleTodo(${t.id})" class="me-2"><span class="flex-grow-1" style="${t.done?'text-decoration:line-through;color:#999':''}">${t.text}</span><small class="text-muted me-1">${t.time}</small><button class="btn btn-sm text-danger" onclick="delTodo(${t.id})">×</button></div>`).join('');}
+// Notes
+function saveNote(){const v=document.getElementById('noteInput').value.trim();if(!v)return;const notes=load(STORAGE.note);notes.unshift({id:Date.now(),content:v,time:new Date().toLocaleString()});if(notes.length>50)notes.length=50;save(STORAGE.note,notes);document.getElementById('noteInput').value='';renderNotes();}
+function clearNote(){document.getElementById('noteInput').value='';}
+function delNote(id){const notes=load(STORAGE.note).filter(x=>x.id!==id);save(STORAGE.note,notes);renderNotes();}
+function renderNotes(){const notes=load(STORAGE.note);document.getElementById('noteList').innerHTML=notes.length===0?'<p class="text-muted small">暂无笔记</p>':notes.map(n=>`<div class="border rounded p-2 mb-1 bg-light"><div class="small" style="white-space:pre-wrap">${n.content}</div><div class="d-flex justify-content-between mt-1"><small class="text-muted">${n.time}</small><button class="btn btn-sm text-danger" onclick="delNote(${n.id})">×</button></div></div>`).join('');}
+// Errors
+function addError(){const q=document.getElementById('errorQ').value.trim();const a=document.getElementById('errorA').value.trim();if(!q||!a)return;const errors=load(STORAGE.error);errors.unshift({id:Date.now(),question:q,answer:a,time:new Date().toLocaleString(),reviewed:0});save(STORAGE.error,errors);document.getElementById('errorQ').value='';document.getElementById('errorA').value='';renderErrors();}
+function delError(id){const errors=load(STORAGE.error).filter(x=>x.id!==id);save(STORAGE.error,errors);renderErrors();}
+function reviewError(id){const errors=load(STORAGE.error);const e=errors.find(x=>x.id===id);if(e)e.reviewed=(e.reviewed||0)+1;save(STORAGE.error,errors);renderErrors();}
+function renderErrors(){const errors=load(STORAGE.error);document.getElementById('errorList').innerHTML=errors.length===0?'<p class="text-muted small">暂无错题</p>':errors.map(e=>`<div class="border rounded p-2 mb-1"><div class="small fw-bold">📝 ${e.question}</div><div class="small text-success">✅ ${e.answer}</div><div class="d-flex justify-content-between mt-1"><small class="text-muted">${e.time} · 复习${e.reviewed||0}次</small><div><button class="btn btn-sm btn-outline-info me-1" onclick="reviewError(${e.id})">复习</button><button class="btn btn-sm text-danger" onclick="delError(${e.id})">×</button></div></div></div>`).join('');}
+// Voice
+let recognition=null;
+function toggleVoice(){if(!('webkitSpeechRecognition' in window)&&!('SpeechRecognition' in window)){alert('您的浏览器不支持语音识别，请使用Chrome浏览器');return}if(recognition){stopVoice();return}const SR=window.SpeechRecognition||window.webkitSpeechRecognition;recognition=new SR();recognition.lang='zh-CN';recognition.interimResults=true;recognition.continuous=true;recognition.onresult=e=>{let txt='';for(let i=e.resultIndex;i<e.results.length;i++)txt+=e.results[i][0].transcript;document.getElementById('voiceText').textContent=txt;};recognition.onend=()=>{const txt=document.getElementById('voiceText').textContent;if(txt&&currentTab==='note'){document.getElementById('noteInput').value+=(document.getElementById('noteInput').value?'\n':'')+txt;}else if(txt&&currentTab==='todo'){document.getElementById('todoInput').value=txt;}document.getElementById('voiceText').textContent='';document.getElementById('voiceBar').style.display='none';document.getElementById('voiceBtn').textContent='🎤 录音';recognition=null;};recognition.start();document.getElementById('voiceBar').style.display='block';document.getElementById('voiceBtn').textContent='⏹️ 停止';}
+function stopVoice(){if(recognition){recognition.stop();recognition=null;}document.getElementById('voiceBar').style.display='none';document.getElementById('voiceBtn').textContent='🎤 录音';}
+// Init
+renderTodos();
+</script>
+
+    </main>
+
+    <!-- ============================================
+    页脚 — 安静的存在感
+    ============================================ -->
+    <footer>
+        <div class="container text-center">
+            <p class="mb-0">
+                🌙 临床医学学习与复习系统 v1.0 · 内容仅供学习参考，具体诊疗请以临床指南为准
+            </p>
+        </div>
+    </footer>
+
+    <!-- ============================================
+    移动端底部导航栏 — 拇指友好的快捷入口
+    ============================================ -->
+    <nav class="mobile-bottom-nav">
+        <a href="/" class="">
+            <span class="nav-icon">🏠</span>
+            <span>首页</span>
+        </a>
+        <a href="/browse" class="">
+            <span class="nav-icon">📋</span>
+            <span>浏览</span>
+        </a>
+        <a href="/search" class="">
+            <span class="nav-icon">🔍</span>
+            <span>搜索</span>
+        </a>
+        <a href="/mindmap" class="">
+            <span class="nav-icon">🧠</span>
+            <span>思维图</span>
+        </a>
+        <a href="/notepad" class="active">
+            <span class="nav-icon">📝</span>
+            <span>记事本</span>
+        </a>
+    </nav>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 公共工具函数 -->
+    <script src="/static/js/common.js"></script>
+    
+</body>
+</html>

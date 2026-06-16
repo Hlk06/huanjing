@@ -1,0 +1,197 @@
+<!-- search.html — 症状搜索页 (Stitch v3 温馨静谧版) -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<!--
+  base.html — 温馨静谧主题 (Stitch)
+  设计理念: 午后阳光洒在医学书页上 — 温暖、静谧、放松
+  支持: 桌面端 + 平板 + 手机端响应式
+-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>症状搜索 · 温馨学习空间</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- 温馨主题样式 -->
+    <link href="/static/css/style.css" rel="stylesheet">
+    
+</head>
+<body>
+    <!-- ============================================
+    顶部导航栏 — 温暖鼠尾草绿渐变
+    ============================================ -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm" style="background: linear-gradient(135deg, #8bae9b 0%, #6d9482 40%, #5a8070 100%) !important;">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                🌿 临床医学知识库
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="导航菜单">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link " href="/">
+                            🏠 首页
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/browse">
+                            📋 系统浏览
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/textbooks">
+                            📚 教材
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/literacy">
+                            🩺 素养
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/mindmap">
+                            🧠 思维图
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/notepad">
+                            📝 记事本
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/quiz">
+                            ✍️ 刷题
+                        </a>
+                    </li>
+                    <li class="nav-item d-none d-lg-block">
+                        <a class="nav-link " href="/admin">
+                            ⚙️
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================
+    主内容区域
+    ============================================ -->
+    <main class="container mt-4 mb-5">
+        
+            
+        
+
+        
+<!-- 搜索区域 -->
+<div class="row justify-content-center mb-3">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0" style="border-radius: 16px;">
+            <div class="card-body p-3 p-md-4">
+                <h4 class="mb-2" style="color: #5a8070; font-size: 1.1rem;">
+                    🔍 症状搜索疾病
+                </h4>
+                <p style="color: #a89888; font-size: 0.82rem; margin-bottom: 12px;">
+                    输入一个或多个症状（用空格或逗号分隔），系统将匹配最相关的疾病
+                </p>
+                <form action="/search" method="GET" id="searchForm">
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text bg-white" style="border-radius: 12px 0 0 12px;">
+                            🔍
+                        </span>
+                        <input type="text" name="q" class="form-control" id="searchInput"
+                               value="" placeholder="例如：胸痛 呼吸困难 心悸…"
+                               autocomplete="off" autofocus
+                               style="font-size: 0.92rem;">
+                        <button class="btn px-4" type="submit"
+                                style="background: #7a9e8f; color: #fff; border-radius: 0 12px 12px 0;">
+                            搜索
+                        </button>
+                    </div>
+                    <!-- 搜索建议下拉 -->
+                    <div id="searchSuggestions" class="dropdown-menu w-100 shadow" style="display:none;"></div>
+                    <!-- 级别筛选 -->
+                    <div class="mt-2 d-flex gap-2 align-items-center">
+                        <small style="color: #a89888;">筛选：</small>
+                        <div class="btn-group btn-group-sm">
+                            <input type="radio" class="btn-check" name="level" id="levelAll" value="all"
+                                   checked>
+                            <label class="btn btn-outline-secondary" for="levelAll" style="border-radius: 8px;">全部</label>
+
+                            <input type="radio" class="btn-check" name="level" id="levelUG" value="undergraduate"
+                                   >
+                            <label class="btn btn-outline-secondary" for="levelUG" style="border-radius: 8px;">🎓 本科</label>
+
+                            <input type="radio" class="btn-check" name="level" id="levelPG" value="graduate"
+                                   >
+                            <label class="btn btn-outline-secondary" for="levelPG" style="border-radius: 8px; color: #8b7da5; border-color: #b8a9c9;">🔬 研究生</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 搜索结果 -->
+
+<!-- 未输入搜索词 -->
+<div class="empty-state">
+    <div class="empty-icon" style="font-size: 3.5rem;">🔍</div>
+    <h5 style="color: #7a6e65;">请输入症状关键词开始搜索</h5>
+    <p style="color: #c4b8ab;">支持的症状如：胸痛、发热、咳嗽、呼吸困难、头痛、腹痛、水肿、心悸等</p>
+</div>
+
+
+    </main>
+
+    <!-- ============================================
+    页脚 — 安静的存在感
+    ============================================ -->
+    <footer>
+        <div class="container text-center">
+            <p class="mb-0">
+                🌙 临床医学学习与复习系统 v1.0 · 内容仅供学习参考，具体诊疗请以临床指南为准
+            </p>
+        </div>
+    </footer>
+
+    <!-- ============================================
+    移动端底部导航栏 — 拇指友好的快捷入口
+    ============================================ -->
+    <nav class="mobile-bottom-nav">
+        <a href="/" class="">
+            <span class="nav-icon">🏠</span>
+            <span>首页</span>
+        </a>
+        <a href="/browse" class="">
+            <span class="nav-icon">📋</span>
+            <span>浏览</span>
+        </a>
+        <a href="/search" class="active">
+            <span class="nav-icon">🔍</span>
+            <span>搜索</span>
+        </a>
+        <a href="/mindmap" class="">
+            <span class="nav-icon">🧠</span>
+            <span>思维图</span>
+        </a>
+        <a href="/notepad" class="">
+            <span class="nav-icon">📝</span>
+            <span>记事本</span>
+        </a>
+    </nav>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 公共工具函数 -->
+    <script src="/static/js/common.js"></script>
+    
+<script src="/static/js/search.js"></script>
+
+</body>
+</html>

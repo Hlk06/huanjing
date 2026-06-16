@@ -1,0 +1,195 @@
+<!-- quiz.html — 刷题模式 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<!--
+  base.html — 温馨静谧主题 (Stitch)
+  设计理念: 午后阳光洒在医学书页上 — 温暖、静谧、放松
+  支持: 桌面端 + 平板 + 手机端响应式
+-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>刷题</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- 温馨主题样式 -->
+    <link href="/static/css/style.css" rel="stylesheet">
+    
+</head>
+<body>
+    <!-- ============================================
+    顶部导航栏 — 温暖鼠尾草绿渐变
+    ============================================ -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm" style="background: linear-gradient(135deg, #8bae9b 0%, #6d9482 40%, #5a8070 100%) !important;">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                🌿 临床医学知识库
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="导航菜单">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link " href="/">
+                            🏠 首页
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/browse">
+                            📋 系统浏览
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/textbooks">
+                            📚 教材
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/literacy">
+                            🩺 素养
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/mindmap">
+                            🧠 思维图
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/notepad">
+                            📝 记事本
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/quiz">
+                            ✍️ 刷题
+                        </a>
+                    </li>
+                    <li class="nav-item d-none d-lg-block">
+                        <a class="nav-link " href="/admin">
+                            ⚙️
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================
+    主内容区域
+    ============================================ -->
+    <main class="container mt-4 mb-5">
+        
+            
+        
+
+        
+<div class="mb-2 d-flex justify-content-between align-items-center"><h5 class="fw-bold mb-0">✍️ 刷题模式</h5><div><button class="btn btn-sm btn-primary me-1" onclick="switchTab('practice')" id="tabBtnP">📝 练习</button><button class="btn btn-sm btn-outline-secondary me-1" onclick="switchTab('manage')" id="tabBtnM">⚙️ 题库管理</button><button class="btn btn-sm btn-outline-info" onclick="switchTab('import')" id="tabBtnI">📥 自动组题</button></div></div>
+
+<!-- Practice mode -->
+<div id="tabPractice">
+ <div id="practiceSetup" class="card p-3 mb-2 bg-light"><div class="row g-2"><div class="col-md-4"><label class="small">题目来源</label><select class="form-select form-select-sm" id="practiceSource"><option value="all">全部题库</option><option value="manual">手动添加</option><option value="auto">自动生成</option></select></div><div class="col-md-4"><label class="small">每题数量</label><select class="form-select form-select-sm" id="practiceCount"><option>5</option><option selected>10</option><option>20</option><option>50</option></select></div><div class="col-md-4 d-flex align-items-end"><button class="btn btn-success btn-sm w-100" onclick="startPractice()">🚀 开始练习</button></div></div></div>
+ <div id="practiceArea" style="display:none;">
+  <div class="d-flex justify-content-between mb-2"><span class="fw-bold" id="qProgress"></span><span class="badge bg-info" id="qScore"></span></div>
+  <div class="card p-3 mb-2"><h6 id="qTitle"></h6><div id="qOptions"></div></div>
+  <div class="d-flex gap-2 justify-content-between"><button class="btn btn-outline-secondary btn-sm" id="btnPrev" onclick="prevQ()" disabled>◀ 上一题</button><button class="btn btn-primary btn-sm" onclick="checkAnswer()">确认答案</button><button class="btn btn-outline-secondary btn-sm" id="btnNext" onclick="nextQ()" disabled>下一题 ▶</button></div>
+  <div id="qResult" class="mt-2"></div>
+  <div class="mt-3"><button class="btn btn-danger btn-sm" onclick="endPractice()">结束练习 · 查看成绩</button></div>
+ </div>
+ <div id="practiceResult" style="display:none;" class="card p-3 text-center"><h4>📊 练习成绩</h4><div class="display-4 fw-bold" id="resultScore"></div><p class="text-muted" id="resultDetail"></p><button class="btn btn-primary" onclick="resetPractice()">再来一组</button></div>
+</div>
+
+<!-- Manage mode -->
+<div id="tabManage" style="display:none;">
+ <div class="row g-2 mb-2"><div class="col-8"><input class="form-control form-control-sm" id="newQ" placeholder="题目..."></div><div class="col-4"><input class="form-control form-control-sm" id="newA" placeholder="正确答案"></div></div>
+ <div class="row g-2 mb-2"><div class="col-4"><input class="form-control form-control-sm" id="newO1" placeholder="选项B"></div><div class="col-4"><input class="form-control form-control-sm" id="newO2" placeholder="选项C"></div><div class="col-4"><input class="form-control form-control-sm" id="newO3" placeholder="选项D"></div></div>
+ <div class="d-flex gap-1 mb-2"><select class="form-select form-select-sm" id="newTag"><option value="">无标签</option><option value="循环系统">循环</option><option value="呼吸系统">呼吸</option><option value="消化系统">消化</option><option value="泌尿系统">泌尿</option><option value="内分泌系统">内分泌</option><option value="神经系统">神经</option><option value="免疫系统">免疫</option><option value="生殖系统">生殖</option><option value="运动系统">运动</option></select><button class="btn btn-sm btn-primary" onclick="addQuestion()">+ 添加</button></div>
+ <div id="questionList"></div>
+</div>
+
+<!-- Auto-import mode -->
+<div id="tabImport" style="display:none;">
+ <div class="card p-3 mb-2 bg-light"><h6>📥 从疾病知识自动生成题目</h6><p class="small text-muted">基于已收录的疾病知识点自动提取生成选择题</p>
+  <div class="row g-2"><div class="col-md-6"><select class="form-select form-select-sm" id="importSystem"><option value="">全部系统</option></select></div><div class="col-md-6"><select class="form-select form-select-sm" id="importType"><option value="definition">定义</option><option value="pathogenesis">发病机制</option><option value="treatment">治疗方案</option><option value="diagnosis">诊断</option></select></div></div>
+  <button class="btn btn-info btn-sm mt-2" onclick="autoGenQuestions()">🔄 自动生成题目</button>
+  <div id="autoGenResult" class="mt-2"></div>
+ </div>
+</div>
+
+<script>
+const QUIZ_KEY='np_quiz_questions';
+function loadQ(){try{return JSON.parse(localStorage.getItem(QUIZ_KEY)||'[]')}catch(e){return[]}}
+function saveQ(v){localStorage.setItem(QUIZ_KEY,JSON.stringify(v))}
+// Tab
+function switchTab(t){['practice','manage','import'].forEach(x=>{document.getElementById('tab'+x.charAt(0).toUpperCase()+x.slice(1)).style.display=x===t?'block':'none';document.getElementById('tabBtn'+x.charAt(0).toUpperCase()+x.slice(1)).classList.toggle('active',x===t);});if(t==='manage')renderQuestions();if(t==='import')loadImportSystems();}
+// Manage questions
+function addQuestion(){const q=document.getElementById('newQ').value.trim();const a=document.getElementById('newA').value.trim();if(!q||!a)return;const opts=[a,document.getElementById('newO1').value.trim(),document.getElementById('newO2').value.trim(),document.getElementById('newO3').value.trim()].filter(x=>x);const questions=loadQ();questions.push({id:Date.now(),question:q,answer:a,options:opts.sort(()=>Math.random()-0.5),tag:document.getElementById('newTag').value,source:'manual',time:new Date().toLocaleString()});saveQ(questions);['newQ','newA','newO1','newO2','newO3'].forEach(x=>document.getElementById(x).value='');renderQuestions();}
+function delQuestion(id){const qs=loadQ().filter(x=>x.id!==id);saveQ(qs);renderQuestions();}
+function renderQuestions(){const qs=loadQ();document.getElementById('questionList').innerHTML=qs.length===0?'<p class="text-muted small">题库为空</p>':qs.map(q=>`<div class="border rounded p-2 mb-1 small"><strong>${q.question}</strong><br><span class="text-success">✅ ${q.answer}</span> ${q.options.filter(o=>o!==q.answer).map(o=>'· '+o).join(' ')}<br><span class="text-muted">${q.tag||''} · ${q.source} · ${q.time}</span><button class="btn btn-sm text-danger float-end" onclick="delQuestion(${q.id})">×</button></div>`).join('');}
+// Practice
+let practiceQuestions=[],currentQ=0,answers=[];
+function startPractice(){const src=document.getElementById('practiceSource').value;const cnt=parseInt(document.getElementById('practiceCount').value);let pool=loadQ();if(src==='manual')pool=pool.filter(q=>q.source==='manual');if(pool.length===0){alert('题库为空! 请先添加题目或自动组题');return}if(pool.length<cnt){alert(`题库仅${pool.length}题，将全部使用`)}practiceQuestions=pool.sort(()=>Math.random()-0.5).slice(0,cnt);currentQ=0;answers=new Array(practiceQuestions.length).fill(null);document.getElementById('practiceSetup').style.display='none';document.getElementById('practiceArea').style.display='block';document.getElementById('practiceResult').style.display='none';showQ();}
+function showQ(){const q=practiceQuestions[currentQ];document.getElementById('qProgress').textContent=`第 ${currentQ+1}/${practiceQuestions.length} 题`;document.getElementById('qTitle').textContent=q.question;const opts=q.options||[q.answer];document.getElementById('qOptions').innerHTML=opts.map((o,i)=>`<div class="form-check"><input class="form-check-input" type="radio" name="qOpt" value="${o}" id="opt${i}" ${answers[currentQ]===o?'checked':''}><label class="form-check-label small" for="opt${i}">${String.fromCharCode(65+i)}. ${o}</label></div>`).join('');document.getElementById('qResult').innerHTML='';document.getElementById('btnPrev').disabled=currentQ===0;document.getElementById('btnNext').disabled=currentQ===practiceQuestions.length-1;updateScore();}
+function checkAnswer(){const sel=document.querySelector('input[name="qOpt"]:checked');if(!sel){alert('请选择一个答案');return}answers[currentQ]=sel.value;const correct=sel.value===practiceQuestions[currentQ].answer;document.getElementById('qResult').innerHTML=correct?`<div class="alert alert-success py-1 small">✅ 正确!</div>`:`<div class="alert alert-danger py-1 small">❌ 错误! 正确答案: ${practiceQuestions[currentQ].answer}</div>`;updateScore();}
+function prevQ(){if(currentQ>0){currentQ--;showQ();}}
+function nextQ(){if(currentQ<practiceQuestions.length-1){currentQ++;showQ();}}
+function updateScore(){const correct=answers.filter((a,i)=>a===practiceQuestions[i]?.answer).length;const answered=answers.filter(a=>a!==null).length;document.getElementById('qScore').textContent=`✅ ${correct} / ${answered} 题`;}
+function endPractice(){const correct=answers.filter((a,i)=>a===practiceQuestions[i]?.answer).length;const total=practiceQuestions.length;document.getElementById('practiceArea').style.display='none';document.getElementById('practiceResult').style.display='block';const pct=Math.round(correct/total*100);document.getElementById('resultScore').textContent=`${pct}%`;document.getElementById('resultScore').style.color=pct>=80?'#27ae60':pct>=60?'#f39c12':'#e74c3c';document.getElementById('resultDetail').textContent=`正确 ${correct}/${total} 题`;}
+function resetPractice(){document.getElementById('practiceSetup').style.display='block';document.getElementById('practiceArea').style.display='none';document.getElementById('practiceResult').style.display='none';}
+// Auto-gen from API
+async function loadImportSystems(){const r=await fetch('/api/systems');const systems=await r.json();const sel=document.getElementById('importSystem');sel.innerHTML='<option value="">全部系统</option>'+systems.filter(s=>s.id<=9).map(s=>`<option value="${s.id}">${s.name}</option>`).join('');}
+async function autoGenQuestions(){const sid=document.getElementById('importSystem').value;const itype=document.getElementById('importType').value;let diseases=[];if(sid){const r=await fetch(`/api/systems/${sid}/diseases`);diseases=await r.json();}else{for(let i=1;i<=9;i++){try{const r=await fetch(`/api/systems/${i}/diseases`);const d=await r.json();diseases=diseases.concat(d);}catch(e){}}}
+let count=0;for(let d of diseases){try{const r=await fetch(`/api/diseases/${d.id}`);const data=await r.json();if(!data.infos)continue;for(let[k,v]of Object.entries(data.infos)){if(!v||!v.length)continue;let match=false;if(itype==='definition'&&k==='definition')match=true;if(itype==='pathogenesis'&&(k==='pathogenesis'||k==='pathology'))match=true;if(itype==='treatment'&&(k==='treatment'||k==='prevention'))match=true;if(itype==='diagnosis'&&(k==='clinical_diagnosis'||k==='examination'))match=true;if(match){const txt=v[0].content;const sentence=txt.split(/[。；;]/).filter(s=>s.length>15&&s.length<100)[0];if(sentence){const questions=loadQ();if(!questions.find(q=>q.question.includes(sentence.slice(0,20)))){questions.push({id:Date.now()+count,question:sentence.trim()+'?',answer:sentence.trim(),options:[sentence.trim()],tag:d.system_name||'',source:'auto',time:new Date().toLocaleString()});saveQ(questions);count++;}}}}}document.getElementById('autoGenResult').innerHTML=`<div class="alert alert-success py-1 small">✅ 自动生成 ${count} 道题目</div>`;renderQuestions();}
+// Init
+renderQuestions();
+</script>
+
+    </main>
+
+    <!-- ============================================
+    页脚 — 安静的存在感
+    ============================================ -->
+    <footer>
+        <div class="container text-center">
+            <p class="mb-0">
+                🌙 临床医学学习与复习系统 v1.0 · 内容仅供学习参考，具体诊疗请以临床指南为准
+            </p>
+        </div>
+    </footer>
+
+    <!-- ============================================
+    移动端底部导航栏 — 拇指友好的快捷入口
+    ============================================ -->
+    <nav class="mobile-bottom-nav">
+        <a href="/" class="">
+            <span class="nav-icon">🏠</span>
+            <span>首页</span>
+        </a>
+        <a href="/browse" class="">
+            <span class="nav-icon">📋</span>
+            <span>浏览</span>
+        </a>
+        <a href="/search" class="">
+            <span class="nav-icon">🔍</span>
+            <span>搜索</span>
+        </a>
+        <a href="/mindmap" class="">
+            <span class="nav-icon">🧠</span>
+            <span>思维图</span>
+        </a>
+        <a href="/notepad" class="">
+            <span class="nav-icon">📝</span>
+            <span>记事本</span>
+        </a>
+    </nav>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 公共工具函数 -->
+    <script src="/static/js/common.js"></script>
+    
+</body>
+</html>

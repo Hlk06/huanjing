@@ -1,0 +1,204 @@
+<!-- mindmap.html — D3.js星点网络图 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<!--
+  base.html — 温馨静谧主题 (Stitch)
+  设计理念: 午后阳光洒在医学书页上 — 温暖、静谧、放松
+  支持: 桌面端 + 平板 + 手机端响应式
+-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>思维图</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- 温馨主题样式 -->
+    <link href="/static/css/style.css" rel="stylesheet">
+    
+</head>
+<body>
+    <!-- ============================================
+    顶部导航栏 — 温暖鼠尾草绿渐变
+    ============================================ -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm" style="background: linear-gradient(135deg, #8bae9b 0%, #6d9482 40%, #5a8070 100%) !important;">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                🌿 临床医学知识库
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="导航菜单">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link " href="/">
+                            🏠 首页
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/browse">
+                            📋 系统浏览
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/textbooks">
+                            📚 教材
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/literacy">
+                            🩺 素养
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/mindmap">
+                            🧠 思维图
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/notepad">
+                            📝 记事本
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/quiz">
+                            ✍️ 刷题
+                        </a>
+                    </li>
+                    <li class="nav-item d-none d-lg-block">
+                        <a class="nav-link " href="/admin">
+                            ⚙️
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================
+    主内容区域
+    ============================================ -->
+    <main class="container mt-4 mb-5">
+        
+            
+        
+
+        
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h5 class="mb-0 fw-bold">🧠 系统-疾病 星点图</h5>
+    <div class="d-flex gap-1">
+        <select class="form-select form-select-sm" id="sysSelect" style="width:auto;"><option value="">全部系统</option><option value="1" >❤️ 循环系统</option><option value="2" >🫁 呼吸系统</option><option value="3" >🔬 消化系统</option><option value="4" >💧 泌尿系统</option><option value="5" >⚡ 内分泌系统</option><option value="6" >🧠 神经系统</option><option value="7" >🛡️ 免疫系统</option><option value="8" >🧬 生殖系统</option><option value="9" >🦴 运动系统</option></select>
+        <button class="btn btn-sm btn-outline-secondary" onclick="resetZoom()">重置</button>
+    </div>
+</div>
+<div id="graphContainer" style="width:100%;height:70vh;border:1px solid #e0e0e0;border-radius:12px;background:#f8f9fa;position:relative;overflow:hidden;"></div>
+<div id="nodeDetail" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999;background:white;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.25);padding:20px;min-width:320px;max-width:90vw;max-height:80vh;overflow-y:auto;">
+    <div class="d-flex justify-content-between mb-2"><strong id="detailTitle"></strong><button class="btn-close" onclick="closeDetail()"></button></div>
+    <div id="detailContent"></div>
+    <div class="d-flex gap-2 mt-3">
+        <button class="btn btn-sm btn-outline-warning" onclick="editNode()">✏️ 编辑</button>
+        <button class="btn btn-sm btn-outline-danger" onclick="deleteNode()">🗑️ 删除</button>
+    </div>
+</div>
+<style>
+.node{cursor:pointer;transition:all .2s}.node:hover{filter:brightness(1.2)}.node text{font-size:10px;pointer-events:none}.link{stroke:#ccc;stroke-opacity:0.6}
+</style>
+
+    </main>
+
+    <!-- ============================================
+    页脚 — 安静的存在感
+    ============================================ -->
+    <footer>
+        <div class="container text-center">
+            <p class="mb-0">
+                🌙 临床医学学习与复习系统 v1.0 · 内容仅供学习参考，具体诊疗请以临床指南为准
+            </p>
+        </div>
+    </footer>
+
+    <!-- ============================================
+    移动端底部导航栏 — 拇指友好的快捷入口
+    ============================================ -->
+    <nav class="mobile-bottom-nav">
+        <a href="/" class="">
+            <span class="nav-icon">🏠</span>
+            <span>首页</span>
+        </a>
+        <a href="/browse" class="">
+            <span class="nav-icon">📋</span>
+            <span>浏览</span>
+        </a>
+        <a href="/search" class="">
+            <span class="nav-icon">🔍</span>
+            <span>搜索</span>
+        </a>
+        <a href="/mindmap" class="active">
+            <span class="nav-icon">🧠</span>
+            <span>思维图</span>
+        </a>
+        <a href="/notepad" class="">
+            <span class="nav-icon">📝</span>
+            <span>记事本</span>
+        </a>
+    </nav>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 公共工具函数 -->
+    <script src="/static/js/common.js"></script>
+    
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+let graphData=null,svg=null,simulation=null,selectedNode=null;
+const W=()=>document.getElementById('graphContainer').clientWidth;
+const H=()=>document.getElementById('graphContainer').clientHeight;
+
+function buildGraph(raw){let nodes=[],links=[];nodes.push({id:'root',name:'医学知识',group:0,size:20,type:'root'});
+raw.forEach(s=>{let sid='s'+s.id;nodes.push({id:sid,name:s.name,group:1,size:14,type:'system',sysId:s.id,icon:s.icon||'📋'});
+links.push({source:'root',target:sid,value:1});
+s.diseases.forEach(d=>{let did='d'+d.id;nodes.push({id:did,name:d.name,group:2,size:8,type:'disease',diseaseId:d.id,sysName:s.name});
+links.push({source:sid,target:did,value:1});});});
+return{nodes,links};}
+
+async function loadGraph(){
+    const sid=document.getElementById('sysSelect').value;
+    const url=sid?`/api/systems/${sid}/diseases`:'/api/systems';
+    const resp=await fetch('/api/systems');
+    const systems=await resp.json();
+    let all=[];
+    if(sid){const dr=await fetch(`/api/systems/${sid}/diseases`);const dx=await dr.json();all=[{id:parseInt(sid),name:dx.length>0?dx[0].system_name:'',diseases:dx}];}
+    else{for(let s of systems){if(s.id>9)continue;const dr=await fetch(`/api/systems/${s.id}/diseases`);const dx=await dr.json();all.push({id:s.id,name:s.name,diseases:dx});}}
+    graphData=buildGraph(all.filter(s=>s.diseases.length>0));render();}
+
+function render(){
+    d3.select('#graphContainer').selectAll('*').remove();
+    const w=W(),h=H();svg=d3.select('#graphContainer').append('svg').attr('width',w).attr('height',h);
+    const g=svg.append('g');
+    const zoom=d3.zoom().scaleExtent([0.2,5]).on('zoom',e=>{g.attr('transform',e.transform);});
+    svg.call(zoom);
+    const color=d3.scaleOrdinal(['#e74c3c','#3498db','#2ecc71','#f39c12','#9b59b6','#1abc9c','#e91e63','#ff9800','#607d8b']);
+    simulation=d3.forceSimulation(graphData.nodes).force('link',d3.forceLink(graphData.links).id(d=>d.id).distance(100)).force('charge',d3.forceManyBody().strength(-300)).force('center',d3.forceCenter(w/2,h/2)).force('collision',d3.forceCollide().radius(d=>d.size*1.5));
+    const link=g.append('g').selectAll('line').data(graphData.links).enter().append('line').attr('class','link').attr('stroke-width',d=>Math.sqrt(d.value));
+    const node=g.append('g').selectAll('g').data(graphData.nodes).enter().append('g').attr('class','node').call(d3.drag().on('start',(e,d)=>{if(!e.active)simulation.alphaTarget(0.3).restart();d.fx=d.x;d.fy=d.y;}).on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y;}).on('end',(e,d)=>{if(!e.active)simulation.alphaTarget(0);d.fx=null;d.fy=null;}));
+    node.append('circle').attr('r',d=>d.size).attr('fill',d=>color(d.group)).attr('stroke','#fff').attr('stroke-width',2);
+    node.append('text').text(d=>d.name.length>8?d.name.slice(0,8)+'..':d.name).attr('dx',d=>d.size+4).attr('dy',4);
+    node.append('title').text(d=>d.name);
+    node.on('click',(e,d)=>{e.stopPropagation();if(d.type==='disease')showDetail(d);});
+    node.on('dblclick',(e,d)=>{if(d.type==='disease')window.open('/disease/'+d.diseaseId,'_blank');});
+    simulation.on('tick',()=>{link.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);node.attr('transform',d=>`translate(${d.x},${d.y})`);});
+}
+function showDetail(d){selectedNode=d;fetch(`/api/diseases/${d.diseaseId}`).then(r=>r.json()).then(data=>{document.getElementById('detailTitle').textContent=d.name;let html=`<small class='text-muted'>系统: ${d.sysName}</small><p class='mt-2'>${data.overview||'无概述'}</p>`;if(data.infos){for(let[k,v]of Object.entries(data.infos)){if(v&&v.length>0){let typeNames={definition:'📖 定义',pathogenesis:'🔄 发病机制',pathology:'🔬 病理',clinical_diagnosis:'📋 诊断',prevention:'🛡️ 预防',treatment:'💊 治疗',prognosis:'📈 预后',examination:'🔍 检查',staging:'📊 分期',differential_diagnosis:'⚖️ 鉴别'};let label=typeNames[k]||k;html+=`<div class='p-2 mt-1 bg-light rounded small'><strong>${label}:</strong> ${v[0].content.slice(0,120)}...</div>`;}}}document.getElementById('detailContent').innerHTML=html;document.getElementById('nodeDetail').style.display='block';});}
+function closeDetail(){document.getElementById('nodeDetail').style.display='none';selectedNode=null;}
+function editNode(){if(!selectedNode)return;window.open('/disease/'+selectedNode.diseaseId,'_blank');closeDetail();}
+function deleteNode(){if(!selectedNode)return;if(!confirm(`确定要删除"${selectedNode.name}"? 此操作不可撤销!`))return;fetch(`/api/diseases/${selectedNode.diseaseId}`,{method:'DELETE'}).then(r=>r.json()).then(d=>{alert(d.message||'已删除');closeDetail();setTimeout(loadGraph,500);});}
+function resetZoom(){svg.transition().duration(500).call(d3.zoom().transform,d3.zoomIdentity);}
+document.getElementById('sysSelect')?.addEventListener('change',loadGraph);
+loadGraph();
+</script>
+
+</body>
+</html>
