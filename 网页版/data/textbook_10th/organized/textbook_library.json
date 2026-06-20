@@ -1,0 +1,272 @@
+{
+  "公共卫生与人文": [
+    {
+      "name": "临床药理学",
+      "edition": "第7版",
+      "color": "#2ecc71",
+      "icon": "💉",
+      "pages": 0,
+      "desc": "作者: 李俊",
+      "author": "李俊",
+      "has_pages": true,
+      "page_count": 0
+    },
+    {
+      "name": "卫生法",
+      "edition": "第6版",
+      "color": "#2ecc71",
+      "icon": "⚖️",
+      "pages": 0,
+      "desc": "作者: 黎东生",
+      "author": "黎东生",
+      "has_pages": true,
+      "page_count": 0
+    },
+    {
+      "name": "预防医学",
+      "edition": "第8版",
+      "color": "#2ecc71",
+      "icon": "🛡️",
+      "pages": 0,
+      "desc": "作者: 傅华",
+      "author": "傅华",
+      "has_pages": true,
+      "page_count": 0
+    }
+  ],
+  "基础医学": [
+    {
+      "name": "人体寄生虫学",
+      "edition": "第10版",
+      "color": "#3498db",
+      "icon": "🐛",
+      "pages": 0,
+      "desc": "作者: 诸欣平、苏川",
+      "author": "诸欣平、苏川",
+      "has_pages": true,
+      "page_count": 0
+    },
+    {
+      "name": "医学免疫学",
+      "edition": "第8版",
+      "color": "#3498db",
+      "icon": "🛡️",
+      "pages": 0,
+      "desc": "作者: 曹雪涛",
+      "author": "曹雪涛",
+      "has_pages": true,
+      "page_count": 0
+    },
+    {
+      "name": "医学微生物学",
+      "edition": "第10版",
+      "color": "#3498db",
+      "icon": "🦠",
+      "pages": 0,
+      "desc": "作者: 李凡、徐志凯",
+      "author": "李凡、徐志凯",
+      "has_pages": true,
+      "page_count": 0
+    },
+    {
+      "name": "医学细胞生物学",
+      "edition": "第7版",
+      "color": "#3498db",
+      "icon": "🧫",
+      "pages": 0,
+      "desc": "作者: 陈誉华、陈志南",
+      "author": "陈誉华、陈志南",
+      "has_pages": true,
+      "page_count": 0
+    },
+    {
+      "name": "局部解剖学",
+      "edition": "第10版",
+      "color": "#3498db",
+      "icon": "🔍",
+      "pages": 0,
+      "desc": "作者: 张绍祥、张雅芳",
+      "author": "张绍祥、张雅芳",
+      "has_pages": true,
+      "page_count": 0
+    },
+    {
+      "name": "生物化学与分子生物学",
+      "edition": "第10版",
+      "color": "#3498db",
+      "icon": "📖",
+      "pages": 0,
+      "desc": "作者: 查锡良、药立波",
+      "author": "查锡良、药立波",
+      "has_pages": true,
+      "page_count": 0
+    },
+    {
+      "name": "生理学",
+      "edition": "第10版",
+      "color": "#3498db",
+      "icon": "⚡",
+      "pages": 0,
+      "desc": "作者: 王庭槐",
+      "author": "王庭槐",
+      "has_pages": true,
+      "page_count": 0
+    },
+    {
+      "name": "病理学",
+      "edition": "第10版",
+      "color": "#3498db",
+      "icon": "🩸",
+      "pages": 0,
+      "desc": "作者: 步宏、李一雷",
+      "author": "步宏、李一雷",
+      "has_pages": true,
+      "page_count": 0
+    },
+    {
+      "name": "病理生理学",
+      "edition": "第10版",
+      "color": "#3498db",
+      "icon": "🧬",
+      "pages": 0,
+      "desc": "作者: 王建枝、钱睿哲",
+      "author": "王建枝、钱睿哲",
+      "has_pages": true,
+      "page_count": 0
+    },
+    {
+      "name": "系统解剖学",
+      "edition": "第10版",
+      "color": "#3498db",
+      "icon": "🦴",
+      "pages": 0,
+      "desc": "作者: 丁文龙、刘学政",
+      "author": "丁文龙、刘学政",
+      "has_pages": true,
+      "page_count": 0
+    },
+    {
+      "name": "组织学与胚胎学",
+      "edition": "第10版",
+      "color": "#3498db",
+      "icon": "🔬",
+      "pages": 0,
+      "desc": "作者: 李和、李继承",
+      "author": "李和、李继承",
+      "has_pages": true,
+      "page_count": 0
+    },
+    {
+      "name": "药理学",
+      "edition": "第10版",
+      "color": "#3498db",
+      "icon": "💊",
+      "pages": 0,
+      "desc": "作者: 杨宝峰、陈建国",
+      "author": "杨宝峰、陈建国",
+      "has_pages": true,
+      "page_count": 0
+    }
+  ],
+  "临床医学": [
+    {
+      "name": "传染病学",
+      "edition": "第10版",
+      "color": "#e74c3c",
+      "icon": "🦠",
+      "pages": 0,
+      "desc": "作者: 李兰娟、任红",
+      "author": "李兰娟、任红",
+      "has_pages": true,
+      "page_count": 0
+    },
+    {
+      "name": "儿科学",
+      "edition": "第10版",
+      "color": "#e74c3c",
+      "icon": "👶",
+      "pages": 0,
+      "desc": "作者: 王卫平",
+      "author": "王卫平",
+      "has_pages": true,
+      "page_count": 0
+    },
+    {
+      "name": "内科学",
+      "edition": "第10版",
+      "color": "#e74c3c",
+      "icon": "🫀",
+      "pages": 0,
+      "desc": "作者: 葛均波、王辰、王建安",
+      "author": "葛均波、王辰、王建安",
+      "has_pages": true,
+      "page_count": 0
+    },
+    {
+      "name": "医学影像学",
+      "edition": "第9版",
+      "color": "#e74c3c",
+      "icon": "📷",
+      "pages": 0,
+      "desc": "作者: 徐克、龚启勇",
+      "author": "徐克、龚启勇",
+      "has_pages": true,
+      "page_count": 0
+    },
+    {
+      "name": "外科学",
+      "edition": "第10版",
+      "color": "#e74c3c",
+      "icon": "🔪",
+      "pages": 0,
+      "desc": "作者: 陈孝平、汪建平、赵继宗",
+      "author": "陈孝平、汪建平、赵继宗",
+      "has_pages": true,
+      "page_count": 0
+    },
+    {
+      "name": "妇产科学",
+      "edition": "第10版",
+      "color": "#e74c3c",
+      "icon": "🤰",
+      "pages": 0,
+      "desc": "作者: 谢幸、孔北华",
+      "author": "谢幸、孔北华",
+      "has_pages": true,
+      "page_count": 0
+    },
+    {
+      "name": "神经病学",
+      "edition": "第9版",
+      "color": "#e74c3c",
+      "icon": "🧠",
+      "pages": 0,
+      "desc": "作者: 贾建平",
+      "author": "贾建平",
+      "has_pages": true,
+      "page_count": 0
+    },
+    {
+      "name": "精神病学",
+      "edition": "第9版",
+      "color": "#e74c3c",
+      "icon": "🧩",
+      "pages": 0,
+      "desc": "作者: 李凌江、陆林",
+      "author": "李凌江、陆林",
+      "has_pages": true,
+      "page_count": 0
+    },
+    {
+      "name": "诊断学",
+      "edition": "第10版",
+      "color": "#e74c3c",
+      "icon": "🩺",
+      "pages": 0,
+      "desc": "作者: 万学红、卢雪峰",
+      "author": "万学红、卢雪峰",
+      "has_pages": true,
+      "page_count": 0
+    }
+  ]
+}

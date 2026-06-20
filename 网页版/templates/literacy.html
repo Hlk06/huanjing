@@ -1,0 +1,40 @@
+{% extends 'base.html' %}{% block title %}医学素养{% endblock %}
+{% block content %}
+<div class="mb-3"><nav aria-label="breadcrumb"><ol class="breadcrumb small"><li class="breadcrumb-item"><a href="/">首页</a></li><li class="breadcrumb-item active">医学素养</li></ol></nav><h4 class="fw-bold mb-0">🩺 医学素养</h4><small class="text-muted">卫生法学 + 预防医学 · 点击展开查看完整知识</small></div>
+<ul class="nav nav-tabs mb-3"><li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabLaw">⚖️ 卫生法学 (7章)</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabPrev">🛡️ 预防医学 (8章)</button></li></ul>
+<div class="tab-content">
+<div class="tab-pane fade show active" id="tabLaw">
+ <div class="accordion" id="lawAcc">
+  {% set law_sections=[
+    ('第一章 卫生法总论','卫生法是调整卫生社会关系的法律规范的总称，由国家制定或认可并以国家强制力保证实施。涵盖医疗管理、公共卫生、药品管理、食品安全、职业卫生等广泛领域。执业医师法、护士条例、医疗机构管理条例、医疗事故处理条例等是医务人员必须掌握的法律法规。','《卫生法》第6版 第一章'),
+    ('第二章 执业医师法律制度','国家实行医师资格考试制度和执业注册制度。医师经注册取得《医师执业证书》后方可执业。医师权利：诊断、治疗、出具医学证明等。医师义务：遵守法律法规和技术操作规范、保护患者隐私、不得实施不必要的检查和治疗、不得利用职务之便牟取不正当利益。','《卫生法》第6版 执业医师法章节'),
+    ('第三章 药品管理法律制度','《药品管理法》调整药品监督管理，保证药品质量，保障用药安全。假药：所含成分与国家标准不符，或以非药品冒充药品。劣药：成分含量不符合国家标准。生产销售假药的可追究刑事责任。医疗机构配制制剂须经批准，不得在市场销售。','《卫生法》第6版 药品管理法章节'),
+    ('第四章 传染病防治法律制度','《传染病防治法》将传染病分为甲、乙、丙三类。甲类：鼠疫、霍乱。乙类中传染性非典型肺炎、肺炭疽、人感染高致病性禽流感采取甲类防控措施。发现甲类传染病应于2小时内报告。医疗机构应严格执行传染病预检分诊制度。','《卫生法》第6版 传染病防治法章节'),
+    ('第五章 医疗事故处理法律制度','医疗事故是指医疗机构及医务人员在医疗活动中，违反法律法规和诊疗规范，过失造成患者人身损害。分为四级：一级（死亡/重度残疾）、二级（中度残疾/严重功能障碍）、三级（轻度残疾/一般功能障碍）、四级（明显人身损害的其他后果）。不属于医疗事故：紧急抢救措施、医疗意外、不可抗力、患方原因延误等。','《卫生法》第6版 医疗事故处理章节'),
+    ('第六章 食品安全法律制度','《食品安全法》规定食品应无毒无害，符合营养要求。食品安全标准是强制执行的标准。建立食品安全风险监测和评估制度。不符合安全标准的食品应立即召回。','《卫生法》第6版 食品安全法章节'),
+    ('第七章 其他重要卫生法规','献血法（国家实行无偿献血制度）、母婴保健法（保障母亲和婴儿健康）、精神卫生法（保障精神障碍患者合法权益）、人口与计划生育法（促进人口长期均衡发展）、职业病防治法（预防控制和消除职业病危害）。','《卫生法》第6版 相关章节')
+  ] %}
+  {% for title,content,source in law_sections %}
+  <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#law{{loop.index}}" style="font-size:.85rem"><strong>{{title}}</strong></button></h2><div id="law{{loop.index}}" class="accordion-collapse collapse" data-bs-parent="#lawAcc"><div class="accordion-body"><p>{{content}}</p><div class="citation-box p-2 rounded small" style="background:#fff8e1;border-left:3px solid #ffc107"><strong>📚 来源：</strong>{{source}}</div></div></div></div>
+  {% endfor %}
+ </div>
+</div>
+<div class="tab-pane fade" id="tabPrev">
+ <div class="accordion" id="prevAcc">
+  {% set prev_sections=[
+    ('第一章 流行病学基本原理','流行病学是研究人群中疾病与健康状态的分布及其影响因素，制定和评价预防控制策略与措施的学科。疾病分布从时间、空间和人间三维度描述。基本研究方法：描述性研究（现况调查）、分析性研究（病例对照研究、队列研究）和实验性研究。偏倚的识别和控制是研究质量关键。','《预防医学》第8版 流行病学章节'),
+    ('第二章 慢性非传染性疾病预防','我国主要慢性病：心脑血管疾病、恶性肿瘤、慢性呼吸系统疾病和糖尿病，占全部死因80%以上。共同危险因素：吸烟、不合理膳食、缺乏体力活动、过量饮酒。预防策略：全人群策略+高危策略。WHO提出"5×5"慢性病防控框架：5种主要慢性病×5种主要危险因素。','《预防医学》第8版 慢性病防控章节'),
+    ('第三章 传染病预防与控制','传染病流行三环节：传染源→传播途径→易感人群。法定传染病分甲、乙、丙三类共40种。预防策略：管理传染源+切断传播途径+保护易感人群。国家免疫规划疫苗：卡介苗、乙肝、脊灰、百白破、麻疹等。疫苗覆盖率≥95%可形成有效群体免疫屏障。','《预防医学》第8版 传染病防控章节'),
+    ('第四章 环境卫生与职业卫生','空气（PM2.5与心肺疾病）、水、土壤质量与健康。环境污染对健康影响：急性中毒、慢性损害和远期效应（致癌致畸致突变）。法定职业病分10大类132种。职业健康监护和防护设施是防治核心。','《预防医学》第8版 环境卫生/职业卫生章节'),
+    ('第五章 营养与食品安全','中国居民膳食指南（2022）核心推荐：食物多样谷类为主；吃动平衡；多吃蔬果奶类大豆；适量吃鱼禽蛋瘦肉；少盐少油控糖限酒。宏量营养素：碳水化合物50%-65%、脂肪20%-30%、蛋白质10%-15%。','《预防医学》第8版 营养与食品安全章节'),
+    ('第六章 卫生统计学基础','基本步骤：统计设计→收集→整理→分析→结果解释。描述性统计：集中趋势（均数/中位数）和离散趋势（标准差/四分位间距）。统计推断：参数估计+假设检验（t检验/χ²检验等）。P<0.05为差异有统计学意义。','《预防医学》第8版 卫生统计学章节'),
+    ('第七章 健康教育与健康促进','健康教育通过信息传播和行为干预，帮助个体掌握卫生保健知识。健康促进强调政策、环境和服务支持。行为改变阶段变化理论：前意向→意向→准备→行动→维持。','《预防医学》第8版 健康教育章节'),
+    ('第八章 突发公共卫生事件应对','突然发生，造成社会公众健康严重损害的重大事件。应急管理：统一领导、分级负责、属地管理。监测预警→应急响应→现场处置→善后评估。COVID-19疫情凸显公共卫生应急体系的重要性。','《预防医学》第8版 突发公共卫生事件章节')
+  ] %}
+  {% for title,content,source in prev_sections %}
+  <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#prev{{loop.index}}" style="font-size:.85rem"><strong>{{title}}</strong></button></h2><div id="prev{{loop.index}}" class="accordion-collapse collapse" data-bs-parent="#prevAcc"><div class="accordion-body"><p>{{content}}</p><div class="citation-box p-2 rounded small" style="background:#fff8e1;border-left:3px solid #ffc107"><strong>📚 来源：</strong>{{source}}</div></div></div></div>
+  {% endfor %}
+ </div>
+</div>
+</div>
+{% endblock %}

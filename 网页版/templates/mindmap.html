@@ -1,0 +1,237 @@
+{% extends 'base.html' %}{% block title %}星点图 · 临床医学知识库{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+    <h5 class="mb-0 fw-bold" style="color:#5a8070">🧠 系统-疾病 星点图</h5>
+    <div class="d-flex gap-1 align-items-center">
+        <select class="form-select form-select-sm" id="sysSelect" style="width:auto;min-width:110px">
+            <option value="">🌐 全部系统</option>{% for s in systems %}<option value="{{s.id}}" {% if current_system_id==s.id %}selected{% endif %}>{{s.icon}} {{s.name}}</option>{% endfor %}
+        </select>
+        <button class="btn btn-sm btn-outline-secondary" onclick="resetView()" style="font-size:.7rem">↺ 重置</button>
+    </div>
+</div>
+<div id="graphWrap" style="position:relative;width:100%;height:65vh;min-height:420px">
+    <div id="graphContainer" style="position:absolute;inset:0;border:1px solid #e8dfd5;border-radius:14px;background:linear-gradient(180deg,#fefefe,#f5f2ec);overflow:hidden;touch-action:manipulation"></div>
+    <div id="graphLoader" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.5);border-radius:14px;z-index:5;pointer-events:none">
+        <div class="spinner-border text-muted" style="width:2rem;height:2rem"></div>
+    </div>
+</div>
+<small class="text-muted mt-1 d-block" style="font-size:.65rem">💡 拖拽节点 · 滚轮/双指缩放 · 单击查看详情 · 双击打开完整知识页</small>
+
+<!-- 详情弹窗 -->
+<div id="nodeOverlay" style="display:none;position:fixed;inset:0;z-index:1060;background:rgba(0,0,0,.3)" onclick="closeDetail()"></div>
+<div id="nodeDetail" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1061;background:white;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.2);padding:22px;width:92vw;max-width:380px;max-height:72vh;overflow-y:auto;-webkit-overflow-scrolling:touch">
+    <div class="d-flex justify-content-between align-items-start mb-2"><strong id="detailTitle" style="color:#5a8070;font-size:.95rem"></strong><button class="btn-close" onclick="closeDetail()" style="font-size:.6rem"></button></div>
+    <div id="detailContent" style="font-size:.78rem"></div>
+    <div class="d-flex gap-2 mt-3">
+        <a id="detailLink" href="#" class="btn btn-sm text-white text-decoration-none" style="background:#5a8070;font-size:.7rem">✏️ 编辑</a>
+        <button class="btn btn-sm btn-outline-danger" onclick="deleteCurrentNode()" style="font-size:.7rem">🗑️ 删除</button>
+    </div>
+</div>
+
+<!-- 图例 -->
+<div class="mt-2 d-flex flex-wrap gap-2" style="font-size:.65rem">
+    <span style="color:#e74c3c">● 循环</span><span style="color:#3498db">● 呼吸</span><span style="color:#2ecc71">● 消化</span><span style="color:#f39c12">● 泌尿</span><span style="color:#9b59b6">● 内分泌</span><span style="color:#1abc9c">● 神经</span><span style="color:#e91e63">● 免疫</span><span style="color:#ff9800">● 生殖</span><span style="color:#607d8b">● 运动</span>
+</div>
+<style>
+.node{cursor:pointer;transition:all .15s}.node:hover{filter:brightness(1.15)}.node text{font-size:9px;pointer-events:none;fill:#555;font-family:-apple-system,Microsoft YaHei,sans-serif;text-anchor:middle}.link{stroke:#d5cfc6;stroke-opacity:.4}@media(max-width:767px){.node text{font-size:7px}}
+</style>
+{% endblock %}
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script>
+// ========== 星点图引擎 ==========
+const COLORS = ['#e74c3c','#3498db','#2ecc71','#f39c12','#9b59b6','#1abc9c','#e91e63','#ff9800','#607d8b'];
+const SYS_NAMES = ['循环','呼吸','消化','泌尿','内分泌','神经','免疫','生殖','运动'];
+const isMobile = () => window.innerWidth < 768;
+
+let graphData = null, svg = null, sim = null, selectedNode = null;
+let currentZoom = d3.zoomIdentity;
+
+const W = () => document.getElementById('graphContainer').clientWidth;
+const H = () => document.getElementById('graphContainer').clientHeight;
+
+function buildGraph(systems) {
+    let nodes = [], links = [];
+    // Root node
+    nodes.push({id:'root',label:'医学知识',group:-1,size:isMobile()?24:32,type:'root'});
+    systems.forEach((sys,si) => {
+        let sid = 'sys_'+sys.id;
+        nodes.push({id:sid,label:sys.name,group:si,size:isMobile()?14:20,type:'system',sysId:sys.id,icon:sys.icon||'📋'});
+        links.push({source:'root',target:sid});
+        (sys.diseases||[]).forEach(d => {
+            let did = 'dis_'+d.id;
+            nodes.push({id:did,label:d.name,group:si,size:isMobile()?5:8,type:'disease',diseaseId:d.id,sysId:sys.id,sysName:sys.name});
+            links.push({source:sid,target:did});
+        });
+    });
+    return {nodes, links};
+}
+
+async function loadGraph() {
+    const loader = document.getElementById('graphLoader');
+    loader.style.display = 'flex';
+    const sid = document.getElementById('sysSelect').value;
+    let systems = [];
+    if (sid) {
+        const dr = await fetch('/api/systems/'+sid+'/diseases');
+        const dx = await dr.json();
+        if (dx.length > 0) {
+            const sr = await fetch('/api/systems'); const allSys = await sr.json();
+            const s = allSys.find(x => x.id == sid);
+            systems = [{id:s.id,name:s.name,icon:s.icon||'📋',diseases:dx}];
+        }
+    } else {
+        const sr = await fetch('/api/systems'); const allSys = await sr.json();
+        for (let s of allSys) {
+            if (s.id > 9) continue;
+            const dr = await fetch('/api/systems/'+s.id+'/diseases');
+            const dx = await dr.json();
+            if (dx.length > 0) systems.push({id:s.id,name:s.name,icon:s.icon||'📋',diseases:dx});
+        }
+    }
+    graphData = buildGraph(systems);
+    if (graphData.nodes.length === 0) { loader.style.display = 'none'; return; }
+    render();
+}
+
+function render() {
+    const container = document.getElementById('graphContainer');
+    container.innerHTML = '';
+    const w = W(), h = H();
+    if (w === 0 || h === 0) { setTimeout(render,200); return; }
+
+    svg = d3.select(container).append('svg').attr('width',w).attr('height',h).attr('viewBox',[0,0,w,h]);
+    const g = svg.append('g');
+
+    const zoom = d3.zoom().scaleExtent([0.15,5]).on('zoom',e => { currentZoom = e.transform; g.attr('transform',e.transform); });
+    svg.call(zoom);
+
+    // Force simulation
+    sim = d3.forceSimulation(graphData.nodes)
+        .force('link', d3.forceLink(graphData.links).id(d => d.id).distance(d => {
+            if (d.source.type === 'system' && d.target.type === 'disease') return isMobile() ? 55 : 85;
+            if (d.source.type === 'root' && d.target.type === 'system') return isMobile() ? 90 : 140;
+            return 50;
+        }))
+        .force('charge', d3.forceManyBody().strength(d => {
+            if (d.type === 'root') return -500;
+            if (d.type === 'system') return -400;
+            return isMobile() ? -120 : -200;
+        }))
+        .force('center', d3.forceCenter(w/2, h/2))
+        .force('collision', d3.forceCollide().radius(d => d.size * 2.5))
+        .force('x', d3.forceX(w/2).strength(0.03))
+        .force('y', d3.forceY(h/2).strength(0.03));
+
+    // Links
+    const link = g.append('g').selectAll('line').data(graphData.links).enter().append('line')
+        .attr('class','link').attr('stroke-width',d => {
+            if (d.source.type === 'root') return 2;
+            return 0.8;
+        });
+
+    // Nodes
+    const node = g.append('g').selectAll('g').data(graphData.nodes).enter().append('g')
+        .attr('class','node')
+        .call(d3.drag()
+            .on('start',(e,d) => { if(!e.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+            .on('drag',(e,d) => { d.fx = e.x; d.fy = e.y; })
+            .on('end',(e,d) => { if(!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; }));
+
+    // Circles
+    node.append('circle')
+        .attr('r', d => d.size)
+        .attr('fill', d => d.type === 'root' ? '#5a8070' : COLORS[d.group] || '#95a5a6')
+        .attr('stroke', '#fff')
+        .attr('stroke-width', d => d.type === 'root' ? 3 : d.type === 'system' ? 2 : 1)
+        .attr('opacity', d => d.type === 'disease' ? 0.85 : 1);
+
+    // Labels — show disease count for systems
+    node.append('text')
+        .text(d => {
+            if (d.type === 'root') return d.label;
+            if (d.type === 'system') {
+                const cnt = graphData.links.filter(l => l.source.id === d.id).length;
+                return d.label.length > 4 ? d.label.slice(0,4)+'…' : d.label;
+            }
+            return d.label.length > 5 ? d.label.slice(0,5)+'…' : d.label;
+        })
+        .attr('dy', d => d.type === 'root' ? 5 : d.size + 12)
+        .attr('fill', d => d.type === 'root' ? '#5a8070' : '#555')
+        .style('font-weight', d => d.type === 'disease' ? '400' : '700')
+        .style('font-size', d => {
+            if (d.type === 'root') return '12px';
+            if (d.type === 'system') return isMobile() ? '9px' : '10px';
+            return isMobile() ? '7px' : '9px';
+        });
+
+    // Tooltips
+    node.append('title').text(d => d.label);
+
+    // Click handlers
+    node.on('click', (e,d) => { e.stopPropagation();
+        if (d.type === 'disease') showDetail(d);
+        else if (d.type === 'system') { document.getElementById('sysSelect').value = d.sysId; loadGraph(); }
+        else if (d.type === 'root') { document.getElementById('sysSelect').value = ''; loadGraph(); }
+    });
+    node.on('dblclick', (e,d) => { if (d.type === 'disease') window.open('/disease/'+d.diseaseId,'_blank'); });
+
+    // Tick
+    sim.on('tick', () => {
+        link.attr('x1',d => d.source.x).attr('y1',d => d.source.y).attr('x2',d => d.target.x).attr('y2',d => d.target.y);
+        node.attr('transform',d => `translate(${d.x},${d.y})`);
+    }).on('end', () => {
+        document.getElementById('graphLoader').style.display = 'none';
+        // Auto-fit
+        try {
+            const b = svg.node().getBBox();
+            if (b.width > 0 && b.height > 0) {
+                const s = Math.min(w/b.width, h/b.height) * 0.85;
+                const tx = w/2 - (b.x + b.width/2) * s;
+                const ty = h/2 - (b.y + b.height/2) * s;
+                svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity.translate(tx,ty).scale(Math.max(0.2, Math.min(s, 3))));
+            }
+        } catch(e) {}
+    });
+}
+
+// ===== 详情弹窗 =====
+function showDetail(d) {
+    selectedNode = d;
+    document.getElementById('detailTitle').textContent = d.label;
+    document.getElementById('detailContent').innerHTML = '<div class="text-center py-3"><div class="spinner-border spinner-border-sm"></div></div>';
+    document.getElementById('detailLink').href = '/disease/' + d.diseaseId;
+    document.getElementById('nodeOverlay').style.display = 'block';
+    document.getElementById('nodeDetail').style.display = 'block';
+    fetch('/api/diseases/'+d.diseaseId).then(r => r.json()).then(data => {
+        let html = '<small class="text-muted">系统: ' + (d.sysName||'') + '</small>';
+        if (data.overview) html += '<p class="mt-2 small">' + data.overview + '</p>';
+        if (data.infos) {
+            let count = 0;
+            const typeNames = {definition:'📖定义',pathogenesis:'🔄发病',pathology:'🔬病理',clinical_diagnosis:'📋诊断',prevention:'🛡️预防',treatment:'💊治疗',prognosis:'📈预后',examination:'🔍检查',staging:'📊分期',differential_diagnosis:'⚖️鉴别'};
+            for (let [k,v] of Object.entries(data.infos)) {
+                if (v && v.length > 0 && count < 4) {
+                    html += '<div class="p-2 mt-1 bg-light rounded" style="font-size:.72rem"><strong>'+(typeNames[k]||k)+':</strong> '+v[0].content.slice(0,80)+'…</div>';
+                    count++;
+                }
+            }
+        }
+        document.getElementById('detailContent').innerHTML = html;
+    }).catch(() => { document.getElementById('detailContent').innerHTML = '<span class="text-danger">加载失败</span>'; });
+}
+function closeDetail() { document.getElementById('nodeOverlay').style.display = 'none'; document.getElementById('nodeDetail').style.display = 'none'; selectedNode = null; }
+function deleteCurrentNode() {
+    if (!selectedNode || selectedNode.type !== 'disease') return;
+    if (!confirm('确定删除「'+selectedNode.label+'」？此操作不可撤销！')) return;
+    fetch('/api/diseases/'+selectedNode.diseaseId, {method:'DELETE'}).then(() => { closeDetail(); setTimeout(loadGraph, 500); });
+}
+function resetView() { if (svg) svg.transition().duration(400).call(d3.zoom().transform, d3.zoomIdentity); }
+
+// ===== 初始化 =====
+document.getElementById('sysSelect')?.addEventListener('change', loadGraph);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
+let resizeTimer;
+window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (graphData) render(); }, 400); });
+loadGraph();
+</script>
+{% endblock %}

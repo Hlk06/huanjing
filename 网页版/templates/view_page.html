@@ -1,0 +1,69 @@
+<!--
+  view_page.html — 教材原文页面查看
+  作用: 展示教材某一页的完整原文（逐页存储，不修改）
+  显示精确引用信息
+-->
+{% extends 'base.html' %}
+{% block title %}原文 - {{ page.textbook.title if page.textbook else '' }} P{{ page.page_number }}{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">首页</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('browse') }}">教材浏览</a></li>
+        <li class="breadcrumb-item active">原文 P{{ page.page_number }}</li>
+    </ol>
+</nav>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="mb-0">
+                <i class="bi bi-book"></i>
+                {% if page.textbook %}《{{ page.textbook.title }}》{% endif %}
+                第{{ page.page_number }}页 原文
+            </h5>
+        </div>
+        <span class="badge bg-light text-primary">
+            {{ page.char_count }} 字符
+        </span>
+    </div>
+    <div class="card-body bg-light">
+        <!-- 引用信息 -->
+        <div class="citation-box mb-3 p-2 rounded" style="background:#fff8e1; border:1px solid #ffc107; font-size:0.85rem;">
+            <i class="bi bi-info-circle text-warning"></i>
+            <strong>出处：</strong>{{ page.get_citation() }}
+            {% if page.textbook %}
+            · {{ page.textbook.edition or '' }} · {{ page.textbook.publisher or '' }}
+            {% endif %}
+        </div>
+
+        <!-- 原文内容（完整保留，不做任何修改）-->
+        <div class="page-content p-3 bg-white rounded border" style="
+            font-family: 'Microsoft YaHei','SimSun',serif;
+            font-size: 0.92rem;
+            line-height: 2;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 70vh;
+            overflow-y: auto;
+        ">
+            {{ page.raw_text }}
+        </div>
+    </div>
+</div>
+
+<!-- 导航按钮 -->
+<div class="d-flex justify-content-between">
+    {% if page.page_number > 1 %}
+    <a href="?prev={{ page.page_number - 1 }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> 上一页
+    </a>
+    {% else %}
+    <span></span>
+    {% endif %}
+    <a href="?next={{ page.page_number + 1 }}" class="btn btn-outline-primary">
+        下一页 <i class="bi bi-arrow-right"></i>
+    </a>
+</div>
+{% endblock %}

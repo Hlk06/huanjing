@@ -1,0 +1,46 @@
+{% extends 'base.html' %}{% block title %}教材图书馆{% endblock %}
+{% block content %}
+<div class="mb-3"><nav aria-label="breadcrumb"><ol class="breadcrumb small"><li class="breadcrumb-item"><a href="/">首页</a></li><li class="breadcrumb-item active">教材图书馆</li></ol></nav><h4 class="fw-bold mb-0">📚 教材图书馆</h4><small class="text-muted">第10版医学教材全集 · 24本 · 已收录数据库中 · 点击卡片查看内容</small></div>
+{% for category, books in library.items() %}
+<div class="mb-4"><h6 class="mb-2 fw-bold">{{ {'临床医学':'🏥','基础医学':'🔬','公共卫生与人文':'⚖️'}.get(category,'📖') }} {{ category }} <small class="text-muted fw-normal">({{ books|length }}本)</small></h6>
+<div class="row g-3">{% for book in books %}
+<div class="col-6 col-md-4 col-lg-3"><div class="card book-card h-100 border-0 shadow-sm" style="border-top:4px solid {{ book.color }};border-radius:12px;cursor:pointer" onclick="viewBook('{{ book.name }}','{{ book.edition }}','{{ book.author or '人民卫生出版社' }}',{{ book.page_count or 0 }},'{{ book.icon }}','{{ book.color }}',{{ book.has_pages|tojson }})"><div class="card-body text-center p-3"><div class="book-cover mb-2 mx-auto d-flex align-items-center justify-content-center" style="width:72px;height:96px;background:linear-gradient(135deg,{{ book.color }}dd,{{ book.color }}88);border-radius:5px;box-shadow:0 3px 10px {{ book.color }}44"><span style="font-size:1.8rem">{{ book.icon }}</span></div><h6 class="fw-bold mb-0" style="font-size:.8rem">{{ book.name }}</h6><small class="text-muted">{{ book.edition }} · {{ book.page_count }}页</small><div class="mt-1"><span class="badge {% if book.has_pages %}bg-success{% else %}bg-secondary{% endif %}" style="font-size:.55rem">{% if book.has_pages %}✅可查看{% else %}📭待提取{% endif %}</span></div></div></div></div>{% endfor %}</div></div>
+{% endfor %}
+<div class="text-center mt-3"><small class="text-muted">📁 PDF: D:\第10版资料\ | 📁 Word: D:\第10版资料\word\ | 🟢 绿色标记 = 已提取页面可查看</small></div>
+
+<div class="modal fade" id="bookModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header" style="background:linear-gradient(135deg,#667eea,#764ba2);color:white"><h5 class="modal-title" id="bookTitle"></h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body" id="bookContent"><div class="text-center py-5"><div class="spinner-border"></div><p class="text-muted mt-2">加载教材内容...</p></div></div></div></div></div>
+<style>.book-card:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(0,0,0,.12)!important}</style>
+<script>
+async function viewBook(name,edition,author,pages,icon,color,hasPages){
+    document.getElementById('bookTitle').innerHTML=`${icon} ${name} <small class="text-white-50">${edition} · ${pages}页</small>`;
+    document.getElementById('bookContent').innerHTML=`<div class="text-center py-5"><div class="spinner-border"></div><p class="text-muted mt-2">加载中...</p></div>`;
+    new bootstrap.Modal(document.getElementById('bookModal')).show();
+
+    let html=`<div class="p-3 mb-3 rounded" style="background:linear-gradient(135deg,${color}22,${color}11);border-left:4px solid ${color}"><h5>${icon} ${name} (${edition})</h5><p class="mb-1">作者: ${author||'人民卫生出版社'}</p><p class="mb-0 small">📄 共 ${pages} 页 · 人民卫生出版社</p></div>`;
+
+    if(!hasPages){
+        html+=`<div class="alert alert-info small">📭 该教材的页面提取数据暂不可用。<br>请通过 <strong>管理后台→📤上传教材</strong> 上传PDF/Word文件，系统将自动提取文本并生成页面预览。</div>`;
+        document.getElementById('bookContent').innerHTML=html;return;
+    }
+
+    try{
+        let resp=await fetch(`/api/textbook/pages?name=${encodeURIComponent(name)}`);
+        if(!resp.ok){html+=`<div class="alert alert-warning small">⚠️ 加载失败: HTTP ${resp.status}</div>`;document.getElementById('bookContent').innerHTML=html;return;}
+        let data=await resp.json();
+        if(data.error){html+=`<div class="alert alert-warning small">⚠️ ${data.error}</div>`;document.getElementById('bookContent').innerHTML=html;return;}
+        html+=`<div class="alert alert-success small">📖 已提取 ${data.total} 页 · 显示前${data.preview.length}页</div><div class="accordion" id="pageAcc">`;
+        data.preview.forEach((p,i)=>{
+            let txt=(p.t||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            // compress long text
+            let short=txt.length>300?txt.substring(0,300)+'...':txt;
+            html+=`<div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed small py-1" data-bs-toggle="collapse" data-bs-target="#pp${i}" style="font-size:.75rem">📄 第${p.n}页 <span class="ms-2 text-muted">${short.substring(0,60).replace(/&lt;/g,'<').replace(/&gt;/g,'>')}...</span></button></h2><div id="pp${i}" class="accordion-collapse collapse" data-bs-parent="#pageAcc"><div class="accordion-body small" style="white-space:pre-wrap;max-height:300px;overflow-y:auto;font-size:.75rem;line-height:1.6">${txt}</div></div></div>`;
+        });
+        html+=`</div>`;
+        if(data.has_more) html+=`<p class="text-muted small mt-2">仅显示前50页预览，共${data.total}页</p>`;
+    }catch(e){
+        html+=`<div class="alert alert-danger small">❌ 加载出错: ${e.message}</div>`;
+    }
+    document.getElementById('bookContent').innerHTML=html;
+}
+</script>
+{% endblock %}

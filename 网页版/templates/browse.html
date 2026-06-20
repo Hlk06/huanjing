@@ -1,0 +1,231 @@
+<!-- browse.html — 温馨静谧浏览页 (Stitch v3) -->
+{% extends 'base.html' %}{% block title %}系统浏览 · 温馨学习空间{% endblock %}
+{% block content %}
+<div class="row">
+    <!-- 侧边栏 — 系统筛选 -->
+    <div class="col-lg-2 mb-3">
+        <div class="sidebar-warm">
+            <div class="card shadow-sm border-0" style="border-radius: 14px;">
+                <div class="card-header text-white py-2" style="background: linear-gradient(135deg, #8bae9b, #6d9482); border-radius: 14px 14px 0 0 !important;">
+                    <small class="fw-bold">🧬 人体系统</small>
+                </div>
+                <div class="list-group list-group-flush" style="font-size: 0.8rem;">
+                    <a href="{{ url_for('browse', level=current_level) }}"
+                       class="list-group-item list-group-item-action py-2 {% if not current_system %}active{% endif %}"
+                       style="border: none; {% if not current_system %}background: #e8f0ec; color: #5a8070; font-weight: 600; border-left: 3px solid #7a9e8f;{% endif %}">
+                        📋 全部系统
+                    </a>
+                    {% for s in systems[:9] %}
+                    <a href="{{ url_for('browse', system_id=s.id, level=current_level) }}"
+                       class="list-group-item list-group-item-action py-2 d-flex justify-content-between align-items-center {% if current_system and current_system.id == s.id %}active{% endif %}"
+                       style="border: none; border-bottom: 1px solid #f0ebe0; {% if current_system and current_system.id == s.id %}background: #e8f0ec; color: #5a8070; font-weight: 600; border-left: 3px solid #7a9e8f;{% endif %}">
+                        <span>{{ s.icon }} {{ s.name }}</span>
+                        <span class="badge rounded-pill" style="font-size: 0.55rem; background: #ddd2c4; color: #7a6e65;" id="cnt{{ s.id }}">-</span>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="col-lg-10">
+        <!-- 顶栏 — 筛选 + 计数 + 添加疾病 -->
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap: 8px;">
+            <div>
+                <small style="color: #7a6e65;">
+                    {{ current_system.name if current_system else '🌿 全部系统' }} · <strong id="totalDx" style="color: #5a8070;">-</strong> 个疾病
+                </small>
+            </div>
+            <div class="d-flex align-items-center" style="gap: 6px;">
+                <button class="btn btn-sm" onclick="showAddDiseaseModal()"
+                        style="background: #5a8070; color: #fff; border-radius: 8px; font-size: 0.75rem;">
+                    ➕ 新建疾病
+                </button>
+                <div class="btn-group btn-group-sm">
+                    <a href="{{ url_for('browse', system_id=current_system.id if current_system else None, level='all') }}"
+                       class="btn {% if current_level == 'all' %}text-white{% else %}btn-outline-secondary{% endif %}"
+                       style="{% if current_level == 'all' %}background: #7a9e8f; border-color: #7a9e8f;{% endif %} border-radius: 8px;">
+                        全部
+                    </a>
+                    <a href="{{ url_for('browse', system_id=current_system.id if current_system else None, level='undergraduate') }}"
+                       class="btn {% if current_level == 'undergraduate' %}text-white{% else %}btn-outline-secondary{% endif %}"
+                       style="{% if current_level == 'undergraduate' %}background: #7a9e8f; border-color: #7a9e8f;{% endif %} border-radius: 8px;">
+                        🎓 本科
+                    </a>
+                    <a href="{{ url_for('browse', system_id=current_system.id if current_system else None, level='graduate') }}"
+                       class="btn {% if current_level == 'graduate' %}text-white{% else %}btn-outline-secondary{% endif %}"
+                       style="{% if current_level == 'graduate' %}background: #b8a9c9; border-color: #b8a9c9;{% endif %} border-radius: 8px;">
+                        🔬 研究生
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {% if diseases %}
+        <div class="row g-2 animate-stagger" id="diseaseGrid">
+            {% for d in diseases %}
+            <div class="col-md-6 col-lg-4">
+                <div class="disease-card-warm" id="card-{{ d.id }}" onclick="location.href='/disease/{{ d.id }}'">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <span class="disease-name">{{ d.name }}</span>
+                        <span class="badge" style="font-size: 0.6rem;
+                            {% if d.level == 'undergraduate' %}background: #7a9e8f; color: #fff;
+                            {% else %}background: #b8a9c9; color: #fff;{% endif %}">
+                            {{ LEVEL_OPTIONS[d.level]['label'] }}
+                        </span>
+                    </div>
+                    {% if d.overview %}
+                    <p class="disease-overview">
+                        {{ d.overview[:80] }}{% if d.overview|length > 80 %}…{% endif %}
+                    </p>
+                    {% endif %}
+                    <div id="sx-{{ d.id }}" class="mb-2" style="min-height: 20px;">
+                        <span style="font-size: 0.65rem; color: #c4b8ab;">加载中…</span>
+                    </div>
+                    <!-- 知识覆盖进度条 -->
+                    <div class="kb-progress-bar mb-1">
+                        <div class="kb-fill low" id="kbBar-{{ d.id }}" style="width: 0%;"></div>
+                    </div>
+                    <small style="font-size: 0.65rem; color: #a89888;" id="kbText-{{ d.id }}">知识覆盖: -</small>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <h5>该分类下暂无疾病</h5>
+            <p style="color: #c4b8ab;">请选择其他系统或筛选条件</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const ALL_TYPES = ['definition','anatomy','physiology','biochemistry','pathology','pathophysiology','pathogenesis','clinical_diagnosis','examination','differential_diagnosis','staging','prevention','treatment','prognosis'];
+
+async function loadAll() {
+    let sysCounts = {};
+    let totalDx = 0;
+
+    {% for d in diseases %}
+    (async (id, sid) => {
+        try {
+            let r = await fetch('/api/diseases/' + id);
+            let d = await r.json();
+
+            // 症状标签
+            let sx = d.symptoms || [];
+            let sxDiv = document.getElementById('sx-' + id);
+            if (sxDiv) {
+                sxDiv.innerHTML = sx.map(s =>
+                    '<span class="badge symptom-tag symptom-' + s.relevance + ' me-1" style="font-size:0.6rem">' + s.name + '</span>'
+                ).join('') || '<span style="font-size:0.65rem;color:#c4b8ab;">暂无</span>';
+            }
+
+            // 知识覆盖率
+            let filled = 0;
+            if (d.infos) {
+                for (let t of ALL_TYPES) {
+                    if (d.infos[t] && d.infos[t].length > 0) filled++;
+                }
+            }
+            let pct = Math.round(filled / ALL_TYPES.length * 100);
+            let bar = document.getElementById('kbBar-' + id);
+            if (bar) {
+                bar.style.width = pct + '%';
+                bar.className = 'kb-fill ' + (pct < 30 ? 'low' : pct < 60 ? 'medium' : 'high');
+            }
+            let txt = document.getElementById('kbText-' + id);
+            if (txt) txt.textContent = '知识覆盖: ' + filled + '/' + ALL_TYPES.length + ' (' + pct + '%)';
+
+            // 系统计数
+            sysCounts[sid] = (sysCounts[sid] || 0) + 1;
+            totalDx++;
+            document.getElementById('cnt' + sid).textContent = sysCounts[sid];
+            document.getElementById('totalDx').textContent = totalDx;
+        } catch(e) {}
+    })({{ d.id }}, {{ d.system_id }});
+    {% endfor %}
+
+    // 初始化系统计数为0
+    for (let i = 1; i <= 9; i++) {
+        let el = document.getElementById('cnt' + i);
+        if (el && (!el.textContent || el.textContent === '-')) el.textContent = '0';
+    }
+}
+loadAll();
+
+// ===== 添加疾病功能 =====
+function showAddDiseaseModal() {
+    const sysId = {{ current_system.id if current_system else 0 }};
+    const sysName = '{{ current_system.name if current_system else "请选择系统" }}';
+    let html = `<div class="modal fade" id="addDiseaseModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content" style="border-radius:14px">
+        <div class="modal-header" style="background:#faf7f2;border-radius:14px 14px 0 0"><h6 class="fw-bold" style="color:#5a8070">➕ 新建疾病</h6><button class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+            <div class="mb-2"><label class="small">疾病名称 *</label><input class="form-control form-control-sm" id="newDxName" placeholder="如：扩张型心肌病"></div>
+            <div class="mb-2"><label class="small">英文名</label><input class="form-control form-control-sm" id="newDxEn" placeholder="English name"></div>
+            <div class="mb-2"><label class="small">所属系统 *</label><select class="form-select form-select-sm" id="newDxSystem">`;
+    // Fetch systems if not on a specific one
+    html += sysId ? `<option value="${sysId}" selected>${sysName}</option>` : `<option value="">-- 请选择 --</option>`;
+    html += `</select></div>
+            <div class="mb-2"><label class="small">概述</label><textarea class="form-control form-control-sm" id="newDxOverview" rows="2" placeholder="简要描述该疾病..."></textarea></div>
+            <div class="row mb-2"><div class="col-6"><label class="small">层次</label><select class="form-select form-select-sm" id="newDxLevel"><option value="undergraduate">本科</option><option value="graduate">研究生</option></select></div>
+            <div class="col-6"><label class="small">关联症状</label><input class="form-control form-control-sm" id="newDxSymptoms" placeholder="胸痛,呼吸困难(逗号分隔)"></div></div>
+        </div>
+        <div class="modal-footer"><button class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">取消</button><button class="btn btn-sm text-white" style="background:#5a8070" onclick="submitNewDisease()">💾 保存并收录</button></div>
+        <div id="addDiseaseMsg" class="px-3 pb-2 small"></div>
+    </div></div></div>`;
+    // Remove old modal if exists
+    let old = document.getElementById('addDiseaseModal'); if(old) old.remove();
+    document.body.insertAdjacentHTML('beforeend', html);
+    // Load systems dropdown if needed
+    if(!sysId){
+        fetch('/api/systems').then(r=>r.json()).then(systems=>{
+            let sel = document.getElementById('newDxSystem');
+            systems.filter(s=>s.id<=9).forEach(s=>{sel.innerHTML+=`<option value="${s.id}">${s.icon||''} ${s.name}</option>`});
+        });
+    }
+    new bootstrap.Modal(document.getElementById('addDiseaseModal')).show();
+}
+
+async function submitNewDisease(){
+    const name = document.getElementById('newDxName').value.trim();
+    const systemId = parseInt(document.getElementById('newDxSystem').value);
+    const msg = document.getElementById('addDiseaseMsg');
+    if(!name){msg.innerHTML='<span class="text-danger">请输入疾病名称</span>';return;}
+    if(!systemId){msg.innerHTML='<span class="text-danger">请选择所属系统</span>';return;}
+    const body={
+        name: name,
+        name_en: document.getElementById('newDxEn').value.trim(),
+        system_id: systemId,
+        level: document.getElementById('newDxLevel').value,
+        overview: document.getElementById('newDxOverview').value.trim(),
+        symptoms: []
+    };
+    // Parse symptoms
+    const sxRaw = document.getElementById('newDxSymptoms').value.trim();
+    if(sxRaw){
+        // Create symptoms on-the-fly (need symptom IDs)
+        // For simplicity, we skip symptom linking for now and just show message
+    }
+    try{
+        const r = await fetch('/api/diseases',{
+            method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify(body)
+        });
+        if(r.ok){
+            const d = await r.json();
+            msg.innerHTML=`<span class="text-success">✅ 已收录"${d.name}"到系统！页面将自动刷新...</span>`;
+            setTimeout(()=>location.reload(), 1200);
+        } else {
+            const e = await r.json();
+            msg.innerHTML=`<span class="text-danger">❌ ${e.error||'收录失败'}</span>`;
+        }
+    } catch(e){msg.innerHTML=`<span class="text-danger">网络错误: ${e.message}</span>`;}
+}
+</script>
+{% endblock %}
