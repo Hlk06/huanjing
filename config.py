@@ -19,7 +19,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'medical-study-app-secret-key-2024')
 # DATABASE_FILE: SQLite数据库文件名，存储在项目根目录
 DATABASE_FILE = os.path.join(BASE_DIR, 'medical.db')
 # SQLALCHEMY_DATABASE_URI: SQLAlchemy连接字符串
-SQLALCHEMY_DATABASE_URI = f'sqlite:///{DATABASE_FILE}'
+# 优先使用环境变量 DATABASE_URL（用于云平台），未设置则回退到本地 sqlite 文件
+SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', f'sqlite:///{DATABASE_FILE}')
 # SQLALCHEMY_TRACK_MODIFICATIONS: 关闭追踪以节省内存
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
