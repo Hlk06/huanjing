@@ -1,9 +1,9 @@
-# ============================================
-# 临床医学学习与复习软件 - Python依赖清单
-# 安装方式: pip install -r requirements.txt
-# ============================================
-
-Flask==3.0.0              # Web框架 - 路由处理、模板渲染
-Flask-SQLAlchemy==3.1.1   # ORM扩展 - 简化数据库操作
-schedule==1.2.0            # 定时任务调度 - 自动检查数据更新
-python-dotenv==1.0.0       # 环境变量管理 - 配置加载
+Flask==3.0.0
+Flask-SQLAlchemy==3.1.1
+gunicorn==20.1.0
+pymupdf==1.22.0
+python-docx==0.8.11
+psycopg2-binary==2.9.6
+schedule==1.2.0
+python-dotenv==1.0.0
+flask-frozen==0.17.0
