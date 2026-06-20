@@ -6,4 +6,4 @@ python-docx==0.8.11
 psycopg2-binary==2.9.6
 schedule==1.2.0
 python-dotenv==1.0.0
-flask-frozen==0.17.0
+Frozen-Flask==0.17.0
